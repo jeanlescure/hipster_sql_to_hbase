@@ -1,57 +1,53 @@
-module Guillotine
-  module Parser
-    grammar SQLOrderByClause
-      include SQLPrimitives
-      include SQLRowSupport
-      include SQLHelpers
-    
-      rule order_by
-        "ORDER" SPACE "BY" SPACE one_or_more_column_names_with_sort { 
-          def eval
-            OrderBy.new(one_or_more_column_names_with_sort.eval)
-          end
-        }
+grammar SQLOrderByClause
+  include SQLPrimitives
+  include SQLRowSupport
+  include SQLHelpers
+
+  rule order_by
+    "ORDER" SPACE "BY" SPACE one_or_more_column_names_with_sort { 
+      def eval
+        OrderBy.new(one_or_more_column_names_with_sort.eval)
       end
-    
-      rule one_or_more_column_names_with_sort
-        one_column_name_with_sort "," SPACE one_or_more_column_names_with_sort {
-          def eval
-            result1, result2 = one_column_name_with_sort.eval, one_or_more_column_names_with_sort.eval
-            [result1, result2].flatten
-          end
-        }
-        / 
-        one_column_name_with_sort
+    }
+  end
+
+  rule one_or_more_column_names_with_sort
+    one_column_name_with_sort "," SPACE one_or_more_column_names_with_sort {
+      def eval
+        result1, result2 = one_column_name_with_sort.eval, one_or_more_column_names_with_sort.eval
+        [result1, result2].flatten
       end
-    
-      rule one_column_name_with_sort
-        one_column_name optional_sort_condition { 
-          def eval
-            column = one_column_name.eval
-            if value = optional_sort_condition.eval
-              OrderByPair.new(column, value)
-            else
-              OrderByPair.new(column)
-            end
-          end 
-        }
-      end
-    
-      rule optional_sort_condition
-        SPACE sort_condition { def eval; sort_condition.eval; end } / EMPTY_STRING
-      end
-    
-      rule sort_condition
-        ascending / descending
-      end
-    
-      rule ascending
-        "ASC" { def eval; Guillotine::Expressions::OrderBy::ASC; end }
-      end
-    
-      rule descending
-        "DESC" { def eval; Guillotine::Expressions::OrderBy::DESC; end }
-      end
-    end
+    }
+    / 
+    one_column_name_with_sort
+  end
+
+  rule one_column_name_with_sort
+    one_column_name optional_sort_condition { 
+      def eval
+        column = one_column_name.eval
+        if value = optional_sort_condition.eval
+          OrderByPair.new(column, value)
+        else
+          OrderByPair.new(column)
+        end
+      end 
+    }
+  end
+
+  rule optional_sort_condition
+    SPACE sort_condition { def eval; sort_condition.eval; end } / EMPTY_STRING
+  end
+
+  rule sort_condition
+    ascending / descending
+  end
+
+  rule ascending
+    "ASC" { def eval; Guillotine::Expressions::OrderBy::ASC; end }
+  end
+
+  rule descending
+    "DESC" { def eval; Guillotine::Expressions::OrderBy::DESC; end }
   end
 end

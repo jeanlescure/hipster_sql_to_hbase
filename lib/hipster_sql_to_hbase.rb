@@ -2,9 +2,10 @@ require "date"
 require "time"
 require "treetop"
 
-Dir["#{File.dirname(__FILE__)}/sql_parser/*.treetop"].each{|treetop_file| Treetop.load treetop_file}
+require_relative "sql_treetop_load"
 
 module HipsterSqlToHbase
+  
   class SqlParser::ItemsNode < Treetop::Runtime::SyntaxNode
     def values
       items.values.unshift(item.value)

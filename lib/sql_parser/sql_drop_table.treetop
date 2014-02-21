@@ -1,30 +1,26 @@
-module Guillotine
-  module Parser
-    grammar DropTable
-      include SQLPrimitives
-      include SQLRowSupport
+grammar DropTable
+  include SQLPrimitives
+  include SQLRowSupport
 
-      rule drop_table
-        "DROP" (temporary)? SPACE "TABLE" SPACE
-        table_name
-        (restrict / cascade)? {
-          def eval
-            DataStore.drop_table(table_name.eval.to_sym)
-          end
-        }
+  rule drop_table
+    "DROP" (temporary)? SPACE "TABLE" SPACE
+    table_name
+    (restrict / cascade)? {
+      def eval
+        DataStore.drop_table(table_name.eval.to_sym)
       end
+    }
+  end
 
-      rule temporary
-        SPACE "TEMPORARY"
-      end
+  rule temporary
+    SPACE "TEMPORARY"
+  end
 
-      rule restrict
-        SPACE "RESTRICT"
-      end
+  rule restrict
+    SPACE "RESTRICT"
+  end
 
-      rule cascade
-        SPACE "CASCADE"
-      end
-    end
+  rule cascade
+    SPACE "CASCADE"
   end
 end

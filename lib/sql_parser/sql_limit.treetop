@@ -1,11 +1,7 @@
-module Guillotine
-  module Parser
-    grammar SQLLimit
-      include SQLPrimitives
-    
-      rule limit
-        "LIMIT" SPACE number { def eval; Limit.new(number.eval); end }
-      end
-    end
+grammar SQLLimit
+  include SQLPrimitives
+
+  rule limit
+    "LIMIT" SPACE number { def eval; Limit.new(number.eval); end }
   end
 end

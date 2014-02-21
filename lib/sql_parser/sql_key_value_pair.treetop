@@ -1,90 +1,86 @@
-module Guillotine
-  module Parser
-    grammar SQLKeyValuePair
-      include SQLPrimitives
-      include SQLRowSupport
-    
-      rule key_value_pair
-        one_column_name optional_spaces joiner_or_null  {
-          def eval
-            results = joiner_or_null.eval
-            klass = Expressions.find_class_for(results[:joiner])
-            if value = results[:value]
-              klass.new(one_column_name.eval.to_sym, results[:value])
-            else
-              klass.new(one_column_name.eval.to_sym)
-            end
-          end
+grammar SQLKeyValuePair
+  include SQLPrimitives
+  include SQLRowSupport
+
+  rule key_value_pair
+    one_column_name optional_spaces joiner_or_null  {
+      def eval
+        results = joiner_or_null.eval
+        klass = Expressions.find_class_for(results[:joiner])
+        if value = results[:value]
+          klass.new(one_column_name.eval.to_sym, results[:value])
+        else
+          klass.new(one_column_name.eval.to_sym)
+        end
+      end
+    }
+  end
+
+  rule joiner_or_null
+    a_null / joiner_with_value
+  end
+
+  rule a_null
+    is_not_null / is_null
+  end
+
+  rule is_not_null
+    "IS" SPACE "NOT" SPACE "NULL" {
+      def eval
+        { :joiner => :"IS NOT NULL" }
+      end
+    }
+  end
+
+  rule is_null
+    "IS" SPACE "NULL" {
+      def eval
+        { :joiner => :"IS NULL" }
+      end
+     }
+  end
+
+  rule joiner_with_value
+    condition_joiner optional_spaces primitive {
+      def eval
+        { 
+          :joiner => condition_joiner.eval,
+          :value => primitive.eval
         }
       end
-    
-      rule joiner_or_null
-        a_null / joiner_with_value
-      end
-    
-      rule a_null
-        is_not_null / is_null
-      end
-    
-      rule is_not_null
-        "IS" SPACE "NOT" SPACE "NULL" {
-          def eval
-            { :joiner => :"IS NOT NULL" }
-          end
-        }
-      end
-    
-      rule is_null
-        "IS" SPACE "NULL" {
-          def eval
-            { :joiner => :"IS NULL" }
-          end
-         }
-      end
-    
-      rule joiner_with_value
-        condition_joiner optional_spaces primitive {
-          def eval
-            { 
-              :joiner => condition_joiner.eval,
-              :value => primitive.eval
-            }
-          end
-        }
-      end
-    
-      rule condition_joiner
-        greater_than_or_equal / 
-        less_than_or_equal / 
-        equals / 
-        not_equals / 
-        less_than / 
-        greater_than
-      end
-    
-      rule less_than_or_equal
-        "<="  {   def eval;   :<=;   end }
-      end
-    
-      rule greater_than_or_equal
-        ">="  {   def eval;   :>=    end }
-      end
-    
-      rule less_than
-        "<"   {   def eval;   :<     end }
-      end
-    
-      rule greater_than
-        ">"   {   def eval;   :>     end }
-      end
-    
-      rule not_equals
-        "!="  {  def eval;   :"!="   end }
-      end
-    
-      rule equals
-        "="   {   def eval;  :"="    end }
-      end
-    end
+    }
+  end
+
+  rule condition_joiner
+    greater_than_or_equal / 
+    less_than_or_equal / 
+    equals / 
+    not_equals / 
+    less_than / 
+    greater_than
+  end
+
+  rule less_than_or_equal
+    "<="  {   def eval;   :<=;   end }
+  end
+
+  rule greater_than_or_equal
+    ">="  {   def eval;   :>=    end }
+  end
+
+  rule less_than
+    "<"   {   def eval;   :<     end }
+  end
+
+  rule greater_than
+    ">"   {   def eval;   :>     end }
+  end
+
+  rule not_equals
+    "!="  {  def eval;   :"!="   end }
+  end
+
+  rule equals
+    "="   {   def eval;  :"="    end }
   end
 end

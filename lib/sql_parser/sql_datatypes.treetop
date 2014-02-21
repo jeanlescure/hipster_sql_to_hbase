@@ -1,67 +1,62 @@
-module Guillotine
-  module Parser
-    grammar SQLDataTypes
-      include SQLPrimitives
+grammar SQLDataTypes
+  include SQLPrimitives
 
-      rule datatype
-        bit_field /
-        numeric_type
-      end
+  rule datatype
+    bit_field /
+    numeric_type
+  end
 
-      rule numeric_type
-        int_type / decimal_type
-      end
+  rule numeric_type
+    int_type / decimal_type
+  end
 
-      rule decimal_type
-        decimal_field field_size_with_space? unsigned? zerofill?
-      end
+  rule decimal_type
+    decimal_field field_size_with_space? unsigned? zerofill?
+  end
 
-      rule decimal_field
-        REAL_KEYWORD    /
-        DOUBLE_KEYWORD  /
-        FLOAT_KEYWORD   /
-        DECIMAL_KEYWORD /
-        NUMERIC_KEYWORD
-      end
+  rule decimal_field
+    REAL_KEYWORD    /
+    DOUBLE_KEYWORD  /
+    FLOAT_KEYWORD   /
+    DECIMAL_KEYWORD /
+    NUMERIC_KEYWORD
+  end
 
-      rule int_type
-        int_field int_options
-      end
+  rule int_type
+    int_field int_options
+  end
 
-      rule int_field
-        TINY_INT_KEYWORD     /
-        SMALL_INT_KEYWORD    /
-        INTEGER_KEYWORD      /
-        INT_KEYWORD          /
-        BIG_INT_KEYWORD
-      end
+  rule int_field
+    TINY_INT_KEYWORD     /
+    SMALL_INT_KEYWORD    /
+    INTEGER_KEYWORD      /
+    INT_KEYWORD          /
+    BIG_INT_KEYWORD
+  end
 
-      rule int_options
-        field_size_with_space? unsigned? zerofill?
-      end
+  rule int_options
+    field_size_with_space? unsigned? zerofill?
+  end
 
-      rule bit_field
-        "BIT" field_size?
-      end
+  rule bit_field
+    "BIT" field_size?
+  end
 
-      rule unsigned
-        SPACE UNSIGNED_KEYWORD
-      end
+  rule unsigned
+    SPACE UNSIGNED_KEYWORD
+  end
 
-      rule zerofill
-        SPACE ZEROFILL_KEYWORD
-      end
+  rule zerofill
+    SPACE ZEROFILL_KEYWORD
+  end
 
-      rule field_size_with_space
-        SPACE? field_size
-      end
+  rule field_size_with_space
+    SPACE? field_size
+  end
 
-      rule field_size
-        OPEN_PARENS SPACE? integer SPACE? CLOSE_PARENS /
-        OPEN_PARENS SPACE? integer SPACE? COMMA SPACE? integer SPACE? CLOSE_PARENS
-      end
-    end
+  rule field_size
+    OPEN_PARENS SPACE? integer SPACE? CLOSE_PARENS /
+    OPEN_PARENS SPACE? integer SPACE? COMMA SPACE? integer SPACE? CLOSE_PARENS
   end
 end
-
   

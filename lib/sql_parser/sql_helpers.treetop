@@ -1,23 +1,19 @@
-module Guillotine
-  module Parser
-    grammar SQLHelpers
-      rule where_condition_or_empty
-        SPACE where_condition {
-          def eval
-            where_condition.eval
-          end
-        }
-        /  
-        EMPTY_STRING
+grammar SQLHelpers
+  rule where_condition_or_empty
+    SPACE where_condition {
+      def eval
+        where_condition.eval
       end
-    
-      rule limit_condition_or_empty
-        SPACE limit { def eval; limit.eval; end } / EMPTY_STRING
-      end
-    
-      rule order_by_condition_or_empty
-        SPACE order_by { def eval; order_by.eval; end } / EMPTY_STRING
-      end
-    end
+    }
+    /  
+    EMPTY_STRING
+  end
+
+  rule limit_condition_or_empty
+    SPACE limit { def eval; limit.eval; end } / EMPTY_STRING
+  end
+
+  rule order_by_condition_or_empty
+    SPACE order_by { def eval; order_by.eval; end } / EMPTY_STRING
   end
 end

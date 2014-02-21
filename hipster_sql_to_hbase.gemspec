@@ -19,9 +19,41 @@ Gem::Specification.new do |s|
     "README.rdoc"
   ]
   s.files = [
+    ".document",
+    "Gemfile",
+    "Gemfile.lock",
     "LICENSE",
+    "LICENSE.txt",
     "README.md",
-    "VERSION"
+    "README.rdoc",
+    "Rakefile",
+    "VERSION",
+    "hipster_sql_to_hbase.gemspec",
+    "lib/hipster_sql_to_hbase.rb",
+    "lib/sql_parser/sql.treetop",
+    "lib/sql_parser/sql_chars.treetop",
+    "lib/sql_parser/sql_create_table.treetop",
+    "lib/sql_parser/sql_datatypes.treetop",
+    "lib/sql_parser/sql_delete.treetop",
+    "lib/sql_parser/sql_drop_table.treetop",
+    "lib/sql_parser/sql_from_clause.treetop",
+    "lib/sql_parser/sql_group_by_clause.treetop",
+    "lib/sql_parser/sql_helpers.treetop",
+    "lib/sql_parser/sql_insert.treetop",
+    "lib/sql_parser/sql_key_value_pair.treetop",
+    "lib/sql_parser/sql_limit.treetop",
+    "lib/sql_parser/sql_order_by_clause.treetop",
+    "lib/sql_parser/sql_primitives.treetop",
+    "lib/sql_parser/sql_row_support.treetop",
+    "lib/sql_parser/sql_select.treetop",
+    "lib/sql_parser/sql_select_clause.treetop",
+    "lib/sql_parser/sql_show_tables.treetop",
+    "lib/sql_parser/sql_tokens.treetop",
+    "lib/sql_parser/sql_transaction.treetop",
+    "lib/sql_parser/sql_truncate.treetop",
+    "lib/sql_parser/sql_where_condition.treetop",
+    "test/helper.rb",
+    "test/test_hipster_sql_to_hbase.rb"
   ]
   s.homepage = "http://github.com/jeanlescure/hipster_sql_to_hbase"
   s.licenses = ["MIT"]

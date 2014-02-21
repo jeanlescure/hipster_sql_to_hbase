@@ -1,43 +1,39 @@
-module Guillotine
-  module Parser
-    grammar SQLCreateTable
-      include SQLRowSupport
-      include SQLDataTypes
+grammar SQLCreateTable
+  include SQLRowSupport
+  include SQLDataTypes
 
-      rule create_table
-        "CREATE TABLE" SPACE table_name SPACE "(" columns_and_datatypes ")" {
-          def eval
-            options = {
-              :columns    => columns_and_datatypes.eval,
-              :table_name => table_name.eval
-            }
-            
-            Expressions::CreateTable.new(options)
-          end
+  rule create_table
+    "CREATE TABLE" SPACE table_name SPACE "(" columns_and_datatypes ")" {
+      def eval
+        options = {
+          :columns    => columns_and_datatypes.eval,
+          :table_name => table_name.eval
         }
+        
+        Expressions::CreateTable.new(options)
       end
+    }
+  end
 
-      rule columns_and_datatypes
-        column_with_datatype COMMA columns_and_datatypes {
-          def eval
-            all = ([column_with_datatype.eval] + columns_and_datatypes.eval)
-            all.flatten!
-            all
-          end
-        }
-        /
-        column_with_datatype {
-          def eval
-            [super]
-          end
-        }
+  rule columns_and_datatypes
+    column_with_datatype COMMA columns_and_datatypes {
+      def eval
+        all = ([column_with_datatype.eval] + columns_and_datatypes.eval)
+        all.flatten!
+        all
       end
+    }
+    /
+    column_with_datatype {
+      def eval
+        [super]
+      end
+    }
+  end
 
-      rule column_with_datatype
-        SPACE? column_name SPACE datatype SPACE? {
-          def eval; Expressions::Column.new(column_name.eval); end
-        }
-      end
-    end
+  rule column_with_datatype
+    SPACE? column_name SPACE datatype SPACE? {
+      def eval; Expressions::Column.new(column_name.eval); end
+    }
   end
 end

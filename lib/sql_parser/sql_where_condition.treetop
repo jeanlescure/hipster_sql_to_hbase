@@ -1,50 +1,46 @@
-module Guillotine
-  module Parser
-    grammar SQLWhereCondition
-      include SQLKeyValuePair
-    
-      rule where_condition
-        "WHERE" SPACE where_clause {
-           def eval
-             where_clause.eval
-           end
-         }
+grammar SQLWhereCondition
+  include SQLKeyValuePair
+
+  rule where_condition
+    "WHERE" SPACE where_clause {
+       def eval
+         where_clause.eval
+       end
+     }
+  end
+
+  rule where_clause
+    OPEN_PARENS optional_spaces where_clause optional_spaces CLOSE_PARENS {
+      def eval
+        where_clause.eval
       end
-    
-      rule where_clause
-        OPEN_PARENS optional_spaces where_clause optional_spaces CLOSE_PARENS {
-          def eval
-            where_clause.eval
-          end
-        }
-        /
-        clause1:single_expression_where_clause      SPACE 
-                disjunction_or_conjunction_joiner   SPACE 
-        clause2:where_clause {
-          def eval
-            klass = Expressions.find_class_for(disjunction_or_conjunction_joiner.eval)
-            klass.new(clause1.eval, clause2.eval)
-          end
-        } 
-        / 
-        single_expression_where_clause
+    }
+    /
+    clause1:single_expression_where_clause      SPACE 
+            disjunction_or_conjunction_joiner   SPACE 
+    clause2:where_clause {
+      def eval
+        klass = Expressions.find_class_for(disjunction_or_conjunction_joiner.eval)
+        klass.new(clause1.eval, clause2.eval)
       end
-    
-      rule disjunction_or_conjunction_joiner
-        and / or
-      end
-    
-      rule and
-        "AND" { def eval; :AND; end }
-      end
-    
-      rule or
-        "OR" { def eval; :OR; end }
-      end
-    
-      rule single_expression_where_clause
-        key_value_pair
-      end
-    end
+    } 
+    / 
+    single_expression_where_clause
+  end
+
+  rule disjunction_or_conjunction_joiner
+    and / or
+  end
+
+  rule and
+    "AND" { def eval; :AND; end }
+  end
+
+  rule or
+    "OR" { def eval; :OR; end }
+  end
+
+  rule single_expression_where_clause
+    key_value_pair
   end
 end

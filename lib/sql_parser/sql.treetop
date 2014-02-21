@@ -1,25 +1,21 @@
-module Guillotine
-  module Parser
-    grammar SQL
-      include SQLSelect
-      include SQLDelete
-      include SQLTruncate
-      include DropTable #TODO: Fix my name
-      include SQLTransaction
-      include SQLInsert
-      include SQLShowTables
-      include SQLCreateTable
+grammar SQL
+  include SQLSelect
+  include SQLDelete
+  include SQLTruncate
+  include DropTable #TODO: Fix my name
+  include SQLTransaction
+  include SQLInsert
+  include SQLShowTables
+  include SQLCreateTable
 
-      rule sql_statement
-        select_expression     /
-        delete                /
-        truncate              /
-        drop_table            /
-        transaction_statement /
-        insert                /
-        show_tables           /
-        create_table
-      end
-    end
+  rule sql_statement
+    select_expression     /
+    delete                /
+    truncate              /
+    drop_table            /
+    transaction_statement /
+    insert                /
+    show_tables           /
+    create_table
   end
 end

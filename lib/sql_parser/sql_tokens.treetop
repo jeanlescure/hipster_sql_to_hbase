@@ -1,113 +1,109 @@
-module Guillotine
-  module Parser
-    grammar SQLTokens
-      rule SPACE
-        " "
-      end
-    
-      rule OPEN_PARENS
-        '('
-      end
+grammar SQLTokens
+  rule SPACE
+    " "
+  end
 
-      rule CLOSE_PARENS
-        ')'
-      end
-      
-      rule EMPTY_STRING
-        '' { def eval; nil; end }
-      end
-      
-      rule TRUE
-        "TRUE" {
-          def eval
-            true
-          end
-        }
-      end
-    
-      rule FALSE
-        "FALSE" {
-          def eval
-            false
-          end
-        }
-      end
-      
-      rule SINGLE_QUOTE
-        "'"
-      end
-      
-      rule DOUBLE_QUOTE
-        "\""
-      end
+  rule OPEN_PARENS
+    '('
+  end
 
-      rule BACKTICK
-        "`"
+  rule CLOSE_PARENS
+    ')'
+  end
+  
+  rule EMPTY_STRING
+    '' { def eval; nil; end }
+  end
+  
+  rule TRUE
+    "TRUE" {
+      def eval
+        true
       end
-      
-      rule COMMA
-        ","
-      end
-      
-      rule STRING_CHARS
-        [a-zA-Z_]
-      end
-      
-      rule DIGIT
-        [0-9]
-      end
-      
-      rule DASH
-        "-" { def eval; nil; end }
-      end
+    }
+  end
 
-      rule REAL_KEYWORD
-        "REAL"
+  rule FALSE
+    "FALSE" {
+      def eval
+        false
       end
+    }
+  end
+  
+  rule SINGLE_QUOTE
+    "'"
+  end
+  
+  rule DOUBLE_QUOTE
+    "\""
+  end
 
-      rule DOUBLE_KEYWORD
-        "DOUBLE"
-      end
+  rule BACKTICK
+    "`"
+  end
+  
+  rule COMMA
+    ","
+  end
+  
+  rule STRING_CHARS
+    [a-zA-Z_]
+  end
+  
+  rule DIGIT
+    [0-9]
+  end
+  
+  rule DASH
+    "-" { def eval; nil; end }
+  end
 
-      rule FLOAT_KEYWORD
-        "FLOAT"
-      end
+  rule REAL_KEYWORD
+    "REAL"
+  end
 
-      rule DECIMAL_KEYWORD
-        "DECIMAL"
-      end
+  rule DOUBLE_KEYWORD
+    "DOUBLE"
+  end
 
-      rule NUMERIC_KEYWORD
-        "NUMERIC"
-      end
-      
-      rule SMALL_INT_KEYWORD
-        "SMALLINT"
-      end
+  rule FLOAT_KEYWORD
+    "FLOAT"
+  end
 
-      rule TINY_INT_KEYWORD
-        "TINYINT"
-      end
+  rule DECIMAL_KEYWORD
+    "DECIMAL"
+  end
 
-      rule INT_KEYWORD
-        "INT"
-      end
+  rule NUMERIC_KEYWORD
+    "NUMERIC"
+  end
+  
+  rule SMALL_INT_KEYWORD
+    "SMALLINT"
+  end
 
-      rule INTEGER_KEYWORD
-        "INTEGER"
-      end
-      
-      rule ZEROFILL_KEYWORD
-        "ZEROFILL"
-      end
-      
-      rule UNSIGNED_KEYWORD
-        "UNSIGNED"
-      end
-      
-      rule BIG_INT_KEYWORD
-        "BIGINT"
-      end
-    end
+  rule TINY_INT_KEYWORD
+    "TINYINT"
+  end
+
+  rule INT_KEYWORD
+    "INT"
+  end
+
+  rule INTEGER_KEYWORD
+    "INTEGER"
+  end
+  
+  rule ZEROFILL_KEYWORD
+    "ZEROFILL"
+  end
+  
+  rule UNSIGNED_KEYWORD
+    "UNSIGNED"
+  end
+  
+  rule BIG_INT_KEYWORD
+    "BIGINT"
   end
 end

@@ -1,47 +1,43 @@
-module Guillotine
-  module Parser
-    grammar SQLTransaction
-      include SQLPrimitives
+grammar SQLTransaction
+  include SQLPrimitives
 
-      rule transaction_statement
-        start_transaction / begin / commit / rollback
-      end
+  rule transaction_statement
+    start_transaction / begin / commit / rollback
+  end
 
-      rule start_transaction
-        "START" SPACE "TRANSACTION" with_consistent_snapshot?
-      end
+  rule start_transaction
+    "START" SPACE "TRANSACTION" with_consistent_snapshot?
+  end
 
-      rule with_consistent_snapshot
-        SPACE "WITH" SPACE "CONSISTENT" SPACE "SNAPSHOT"
-      end
+  rule with_consistent_snapshot
+    SPACE "WITH" SPACE "CONSISTENT" SPACE "SNAPSHOT"
+  end
 
-      rule begin
-        "BEGIN" work?
-      end
+  rule begin
+    "BEGIN" work?
+  end
 
-      rule work
-        SPACE "WORK"
-      end
+  rule work
+    SPACE "WORK"
+  end
 
-      rule commit
-        "COMMIT" optional_transactional_clauses
-      end
+  rule commit
+    "COMMIT" optional_transactional_clauses
+  end
 
-      rule optional_transactional_clauses
-        work? chain? release?
-      end
+  rule optional_transactional_clauses
+    work? chain? release?
+  end
 
-      rule chain
-        SPACE "AND" SPACE ("NO" SPACE)? "CHAIN"
-      end
+  rule chain
+    SPACE "AND" SPACE ("NO" SPACE)? "CHAIN"
+  end
 
-      rule release
-        SPACE ("NO" SPACE)? "RELEASE"
-      end
+  rule release
+    SPACE ("NO" SPACE)? "RELEASE"
+  end
 
-      rule rollback
-        "ROLLBACK" optional_transactional_clauses
-      end
-    end    
+  rule rollback
+    "ROLLBACK" optional_transactional_clauses
   end
 end
