@@ -1,0 +1,68 @@
+module Guillotine
+  module Parser
+    grammar SQLDelete
+      include SQLRowSupport
+      include SQLWhereCondition
+      include SQLOrderByClause
+      include SQLLimit
+      include SQLHelpers
+    
+      rule delete
+        single_table_delete
+      end
+    
+      rule single_table_delete
+        common_delete_clause
+        table_name
+        where_condition_or_empty
+        order_by_condition_or_empty
+        limit_condition_or_empty {
+          def eval
+            DeleteStatement.new(
+              table_name.eval, 
+              where_condition_or_empty.eval, 
+              order_by_condition_or_empty.eval, 
+              limit_condition_or_empty.eval
+            )
+          end
+        }
+      end
+    
+      rule common_delete_clause
+        "DELETE" SPACE
+        optional_delete_directives
+        "FROM" SPACE
+      end
+    
+      rule optional_delete_directives
+        optional_low_priority
+        optional_quick
+        optional_ignore
+      end
+    
+      rule optional_low_priority
+        low_priority / EMPTY_STRING
+      end
+    
+      rule optional_quick
+        quick / EMPTY_STRING
+      end
+    
+      rule optional_ignore
+        ignore / EMPTY_STRING
+      end
+    
+      rule ignore
+        "IGNORE" SPACE
+      end
+    
+      rule quick
+        "QUICK" SPACE
+      end
+    
+      rule low_priority
+        "LOW_PRIORITY" SPACE
+      end
+    end
+  end
+end

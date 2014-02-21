@@ -1,0 +1,9 @@
+module Guillotine
+  module Parser
+    grammar SQLChars
+      rule sql_embeded_language_char
+        "[" / "]"
+      end
+    end
+  end
+end
