@@ -6,21 +6,36 @@ grammar SQLInsert
   rule insert
     "INSERT" SPACE ((low_priority / delayed / high_priority) SPACE)? (ignore SPACE)?
     ("INTO" SPACE)? table_name SPACE? optional_list_of_columns
-    ("VALUES" / "VALUE") SPACE* "(" SPACE* list_of_values SPACE* ")" {
-      def eval
-        options = {
-          :into => table_name.eval.to_sym, 
-          :values => [list_of_values.eval].flatten
-        }
-
-        case columns = optional_list_of_columns.eval
-        when Array
-          options.merge!(:columns => columns.map {|col| col.to_sym })
-        when String
-          options.merge!(:columns => [columns.to_sym])
+    ("VALUES" / "VALUE") SPACE* groups_of_values {
+      def query_type
+        :insert
+      end
+      def tree
+        cols = optional_list_of_columns.eval
+        cols = [cols] if !cols.is_a? Array
+        vals = groups_of_values.eval
+        vals = [vals] if !vals.is_a? Array
+        vals = [vals] if !vals[0].is_a? Array
+        if check_valid(cols,vals)
+          {
+            :into => table_name.eval,
+            :columns => cols,
+            :values => vals
+          }
+        else
+          nil
         end
-
-        Insert.new(options)
+      end
+      def check_valid(cols,vals)
+        xpected_num = cols.length
+        result = true
+        vals.each do |val|
+          if (val.length != xpected_num)
+            result = false
+            break
+          end
+        end
+        result
       end
     }
   end
@@ -56,6 +71,20 @@ grammar SQLInsert
       def eval; one_or_more_column_names.eval; end
     }
   end
+  
+  rule groups_of_values
+    OPEN_PARENS SPACE* list_of_values SPACE* CLOSE_PARENS SPACE* "," SPACE* groups_of_values {
+      def eval
+        [list_of_values.eval,groups_of_values.eval]
+      end
+    }
+    /
+    OPEN_PARENS SPACE* list_of_values SPACE* CLOSE_PARENS {
+      def eval
+        list_of_values.eval
+      end
+    }
+  end
 
   rule list_of_values
     one_or_more_values
@@ -66,11 +95,11 @@ grammar SQLInsert
   rule one_or_more_values
     insert_value SPACE? "," SPACE? one_or_more_values { 
       def eval
-        [insert_value.eval, one_or_more_values.eval]
+        [insert_value.eval, one_or_more_values.eval].flatten
       end
     }
     / 
-    insert_value  
+    insert_value
   end
 
   rule insert_value
@@ -78,8 +107,7 @@ grammar SQLInsert
   end
 
   rule default_value
-    "DEFAULT" SPACE* 
-    OPEN_PARENS SPACE* column_name SPACE* CLOSE_PARENS { 
+    "DEFAULT" SPACE* OPEN_PARENS SPACE* column_name SPACE* CLOSE_PARENS { 
       def eval; "DEFAULT"; end
     }
   end

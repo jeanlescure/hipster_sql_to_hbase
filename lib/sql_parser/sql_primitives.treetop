@@ -28,7 +28,7 @@ grammar SQLPrimitives
   end
 
   rule single_quoted_string
-    SINGLE_QUOTE (STRING_CHARS / DOUBLE_QUOTE)* SINGLE_QUOTE {
+    SINGLE_QUOTE (NON_QUOTE_CHARS / DOUBLE_QUOTE)* SINGLE_QUOTE {
       def eval
         text_value[1..text_value.length-2]
       end
@@ -36,7 +36,7 @@ grammar SQLPrimitives
   end
 
   rule double_quoted_string
-    DOUBLE_QUOTE (STRING_CHARS / SINGLE_QUOTE)* DOUBLE_QUOTE {
+    DOUBLE_QUOTE (NON_QUOTE_CHARS / SINGLE_QUOTE)* DOUBLE_QUOTE {
       def eval
         text_value[1..text_value.length-2]
       end
@@ -45,8 +45,8 @@ grammar SQLPrimitives
 
   rule backtick_string
     BACKTICK string BACKTICK {
-      def eval(backtick_string_class=BacktickString)
-        backtick_string_class.new(text_value)
+      def eval
+        string.eval
       end
     }
   end
@@ -64,7 +64,7 @@ grammar SQLPrimitives
   end
 
   rule integer
-    DIGIT+ {
+    MINUS_OR_DIGIT DIGIT* {
       def eval
         text_value.to_i
       end

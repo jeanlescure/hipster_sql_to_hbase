@@ -36,7 +36,7 @@ grammar SQLRowSupport
   rule one_column_name
     table_name dot column_name {
       def eval
-        table_name.eval + dot.eval + column_name.eval
+        column_name.eval
       end
     } 
     / 
@@ -49,11 +49,7 @@ grammar SQLRowSupport
 
   # TODO: Clean this up
   rule table_name
-    backtick_string {
-      def eval 
-        BacktickString.new(text_value).value
-      end
-    }
+    backtick_string
     /
     string
   end

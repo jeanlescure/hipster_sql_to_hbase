@@ -48,7 +48,15 @@ grammar SQLTokens
   end
   
   rule STRING_CHARS
-    [a-zA-Z_]
+    [0-9a-zA-Z\$_]
+  end
+  
+  rule ALPHA_CHARS
+    [a-zA-Z]
+  end
+  
+  rule NON_QUOTE_CHARS
+    [^'"]
   end
   
   rule DIGIT
@@ -57,6 +65,10 @@ grammar SQLTokens
   
   rule DASH
     "-" { def eval; nil; end }
+  end
+  
+  rule MINUS_OR_DIGIT
+    DASH / DIGIT
   end
 
   rule REAL_KEYWORD

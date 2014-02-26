@@ -1,0 +1,82 @@
+grammar SQLUpdate
+
+  rule parts
+    update / simple_where_clause / assignment_list / assignment / quoted_string / text / identifier
+  end
+
+  rule update
+    "UPDATE" space identifier space "SET" space assignment_list space simple_where_clause {
+      def table_name
+        identifier.text_value
+      end
+      def id
+        simple_where_clause.id
+      end
+      def items
+        assignment_list.items
+      end
+    }
+  end
+
+  rule simple_where_clause
+    "WHERE" space identifier space "=" space quoted_string {
+      def id
+        quoted_string.text_value
+      end
+    }
+  end
+
+  rule assignment_list
+    a1:assignment space "," space a2:assignment_list {
+      def items
+        a1.items.merge(a2.items)
+      end
+    }
+    /
+    assignment
+  end
+
+  rule assignment
+    identifier space "=" space quoted_string {
+
+      def items
+        { key => value }
+      end
+
+      def key
+        identifier.text_value
+      end
+
+      def value
+        quoted_string.text_value
+      end
+    }
+  end
+
+  rule quoted_string
+    "'" text "'" {
+      def text_value
+        text.text_value
+      end
+    }
+    /
+    "''" {
+      def text_value
+        ""
+      end
+    }
+  end
+
+  rule text
+    ( "''" / !"'" . )+
+  end
+
+  rule identifier
+    (!("'" / "=" / " ") .)+
+  end
+
+  rule space
+    ' '*
+  end
+
+end
