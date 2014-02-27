@@ -39,6 +39,20 @@ describe "HipsterSqlToHbase.parse_syntax method" do
     end
   end
   
+  context "when parse_syntax is run against CREATE TABLE query without backticks" do
+    let(:response) { HipsterSqlToHbase.parse_syntax("CREATE TABLE users (user VARCHAR(10), pass VARCHAR(5))") }
+    it "succeeds" do
+      expect(response.class).to eq(Treetop::Runtime::SyntaxNode)
+    end
+  end
+  
+  context "when parse_syntax is run against CREATE TABLE query with backticks" do
+    let(:response) { HipsterSqlToHbase.parse_syntax("CREATE TABLE `users` (`user` VARCHAR(10), `pass` VARCHAR(5))") }
+    it "succeeds" do
+      expect(response.class).to eq(Treetop::Runtime::SyntaxNode)
+    end
+  end
+  
 end
 
 describe "HipsterSqlToHbase.parse_tree method" do 
