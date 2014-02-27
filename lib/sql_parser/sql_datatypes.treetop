@@ -3,7 +3,16 @@ grammar SQLDataTypes
 
   rule datatype
     bit_field /
-    numeric_type
+    numeric_type /
+    char_type
+  end
+  
+  rule char_type
+    char_field field_size_with_space?
+  end
+  
+  rule char_field
+    VARCHAR_KEYWORD
   end
 
   rule numeric_type
@@ -51,12 +60,12 @@ grammar SQLDataTypes
   end
 
   rule field_size_with_space
-    SPACE? field_size
+    SPACE* field_size
   end
 
   rule field_size
-    OPEN_PARENS SPACE? integer SPACE? CLOSE_PARENS /
-    OPEN_PARENS SPACE? integer SPACE? COMMA SPACE? integer SPACE? CLOSE_PARENS
+    OPEN_PARENS SPACE* integer SPACE* CLOSE_PARENS /
+    OPEN_PARENS SPACE* integer SPACE* COMMA SPACE* integer SPACE* CLOSE_PARENS
   end
 end
   

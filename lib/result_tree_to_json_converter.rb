@@ -1,28 +1,25 @@
-require 'securerandom'
-require 'thrift'
+require 'json'
 
 require File.join(File.dirname(__FILE__), 'adapter', 'hbase')
 
 module HipsterSqlToHbase
-  class ResultTreeToHbaseConverter
+  class ResultTreeToJsonConverter
     def convert(result_tree)
       send("#{result_tree[:query_type].to_s}_sentence",result_tree[:query_hash])
     end
     def insert_sentence(hash)
-      thrift_method = "mutateRow"
-      thrift_table = hash[:into]
-      thrift_calls = []
+      table = hash[:into]
+      objects = []
       hash[:values].each do |value_set|
-        thrift_row = SecureRandom.uuid
-        thrift_mutations = []
+        object = {}
         i = 0
         hash[:columns].each do |col|
-          thrift_mutations << HBase::Mutation.new(column: col, value: value_set[i].to_s)
+          object[col.to_sym] = value_set[i]
           i += 1
         end
-        thrift_calls << {:method => thrift_method,:arguments => [thrift_table,thrift_row,thrift_mutations,{}]}
+        objects << object
       end
-      thrift_calls
+      JSON.generate({:write=>{:table=>table,:objects=>objects}})
     end
     def select_sentence
       

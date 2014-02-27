@@ -3,14 +3,24 @@ grammar SQLCreateTable
   include SQLDataTypes
 
   rule create_table
-    "CREATE TABLE" SPACE table_name SPACE "(" columns_and_datatypes ")" {
+    "CREATE" SPACE+ "TABLE" SPACE+ table_name SPACE+ OPEN_PARENS columns_and_datatypes CLOSE_PARENS {
       def eval
         options = {
           :columns    => columns_and_datatypes.eval,
           :table_name => table_name.eval
         }
         
-        Expressions::CreateTable.new(options)
+        options
+      end
+      def query_type
+        :create_table
+      end
+      def tree
+        values = eval
+        {
+          :table => values[:table_name],
+          :columns => values[:columns]
+        }
       end
     }
   end
@@ -18,22 +28,20 @@ grammar SQLCreateTable
   rule columns_and_datatypes
     column_with_datatype COMMA columns_and_datatypes {
       def eval
-        all = ([column_with_datatype.eval] + columns_and_datatypes.eval)
+        all = column_with_datatype.eval + columns_and_datatypes.eval
         all.flatten!
         all
       end
     }
     /
-    column_with_datatype {
-      def eval
-        [super]
-      end
-    }
+    column_with_datatype
   end
 
   rule column_with_datatype
-    SPACE? column_name SPACE datatype SPACE? {
-      def eval; Expressions::Column.new(column_name.eval); end
+    SPACE* column_name SPACE+ datatype SPACE* {
+      def eval
+        [column_name.eval]
+      end
     }
   end
 end

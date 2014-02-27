@@ -75,13 +75,13 @@ grammar SQLInsert
   rule groups_of_values
     OPEN_PARENS SPACE* list_of_values SPACE* CLOSE_PARENS SPACE* "," SPACE* groups_of_values {
       def eval
-        [list_of_values.eval,groups_of_values.eval]
+        [list_of_values.eval] + groups_of_values.eval
       end
     }
     /
     OPEN_PARENS SPACE* list_of_values SPACE* CLOSE_PARENS {
       def eval
-        list_of_values.eval
+        [list_of_values.eval]
       end
     }
   end
@@ -99,7 +99,11 @@ grammar SQLInsert
       end
     }
     / 
-    insert_value
+    insert_value {
+      def eval
+        [super]
+      end
+    }
   end
 
   rule insert_value
