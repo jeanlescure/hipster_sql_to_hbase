@@ -15,7 +15,7 @@ Gem::Specification.new do |s|
     "README.md",
     "README.rdoc"
   ]
-  s.files = Dir.glob("{lib,spec}/**/*") + %w(.document Gemfile Gemfile.lock LICENSE LICENSE.txt README.md README.rdoc Rakefile VERSION hipster_sql_to_hbase.gemspec)
+  s.files = Dir.glob("{lib,spec}/**/*") + %w(.document Gemfile LICENSE LICENSE.txt README.md README.rdoc Rakefile VERSION hipster_sql_to_hbase.gemspec)
   s.homepage = "http://github.com/jeanlescure/hipster_sql_to_hbase"
   s.licenses = ["MIT"]
   s.require_paths = ["lib"]
