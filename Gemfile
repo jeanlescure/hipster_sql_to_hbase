@@ -1,9 +1,4 @@
-source :rubygems
+source "http://rubygems.org"
 
-gem "treetop"
+gemspec
 
-group :development do
-  gem "bundler"
-  gem "rspec"
-  gem "rdoc", "~> 3.12"
-end
