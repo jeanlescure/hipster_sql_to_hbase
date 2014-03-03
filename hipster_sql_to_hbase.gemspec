@@ -31,14 +31,16 @@ Gem::Specification.new do |s|
       s.add_runtime_dependency(%q<json>, [">= 0"])
       s.add_development_dependency(%q<bundler>, [">= 0"])
       s.add_development_dependency(%q<rspec>, [">= 0"])
-      s.add_development_dependency(%q<rdoc>, ["~> 3.12"])
+      s.add_development_dependency(%q<rdoc>, ["~> 4.0.0"])
+      s.add_development_dependency(%q<jfish>, [">= 0.1.1"])
     else
       s.add_dependency(%q<treetop>, [">= 0"])
       s.add_dependency(%q<jml_thrift>, [">= 0"])
       s.add_dependency(%q<json>, [">= 0"])
       s.add_dependency(%q<bundler>, [">= 0"])
       s.add_dependency(%q<rspec>, [">= 0"])
-      s.add_dependency(%q<rdoc>, ["~> 3.12"])
+      s.add_dependency(%q<rdoc>, ["~> 4.0.0"])
+      s.add_dependency(%q<jfish>, [">= 0.1.1"])
     end
   else
     s.add_dependency(%q<treetop>, [">= 0"])
@@ -46,7 +48,8 @@ Gem::Specification.new do |s|
     s.add_dependency(%q<json>, [">= 0"])
     s.add_dependency(%q<bundler>, [">= 0"])
     s.add_dependency(%q<rspec>, [">= 0"])
-    s.add_dependency(%q<rdoc>, ["~> 3.12"])
+    s.add_dependency(%q<rdoc>, ["~> 4.0.0"])
+    s.add_dependency(%q<jfish>, [">= 0.1.1"])
   end
 end
 

@@ -12,6 +12,6 @@ doc
 pkg
 
 #generated gem
-*hipster_sql_to_hbase*.gem
+*.gem
 
 Gemfile.lock

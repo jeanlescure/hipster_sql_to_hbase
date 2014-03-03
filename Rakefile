@@ -20,10 +20,12 @@ end
 
 require 'rdoc/task'
 Rake::RDocTask.new do |rdoc|
+  require 'jfish'
   version = File.exist?('VERSION') ? File.read('VERSION') : ""
-
+  
   rdoc.rdoc_dir = 'rdoc'
+  rdoc.generator = 'jfish'
   rdoc.title = "hipster_sql_to_hbase #{version}"
   rdoc.rdoc_files.include('README.rdoc')
-  rdoc.rdoc_files.include('lib/**/*.rb')
+  rdoc.rdoc_files.include('lib/**/*.rb').exclude(/lib\/adapter/,/lib\/datatype_extras.rb/)
 end
