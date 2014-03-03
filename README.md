@@ -28,7 +28,7 @@ Simply require the gem and execute your SQL query. It's that simple:
 
 `require 'hipster_sql_to_hbase'`
 
-`HipsterSqlToHbase.execute("INSERT INTO `users` (`user`,`pass`) VALUES ('andy','w00dy'),('zaphod','b33bl3br0x')"`,'www.my-hbase-server.com',9090)
+`HipsterSqlToHbase.execute("INSERT INTO users (user,pass) VALUES ('andy','w00dy'),('zaphod','b33bl3br0x')",'www.my-hbase-server.com',9090)`
 
 And boom! You've got your result; which varies depending on the SQL query type you executed (i.e. SELECT, INSERT, etc).
 
