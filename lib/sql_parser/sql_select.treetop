@@ -52,7 +52,7 @@ grammar SQLSelect
               :value => clause_obj.joiner_or_null.primitive.eval
             }
             
-            dc_joiner = clause.disjunction_or_conjunction_joiner.text_value.to_sym rescue dc_joiner = false
+            dc_joiner = clause.disjunction_or_conjunction_joiner.text_value rescue dc_joiner = false
             clauses << dc_joiner if dc_joiner
             
             clause = clause.clause2 rescue false

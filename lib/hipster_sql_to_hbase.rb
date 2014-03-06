@@ -55,9 +55,8 @@ module HipsterSqlToHbase
     # Transforms itself into an HBase (Thrift) method.
     # 
     # === example:
-    # rt = <b>HipsterSqlToHbase</b>::<b>ResultTree</b>.<tt>new({...})</tt>
-    #
-    # rt.to_hbase #=> {:method => 'mutateRow', :arguments => {...}}
+    #   rt = HipsterSqlToHbase::ResultTree.new({...})
+    #   rt.to_hbase #=> {:method => 'mutateRow', :arguments => {...}}
     def to_hbase
       HipsterSqlToHbase::ResultTreeToHbaseConverter.new().convert self
     end
@@ -65,9 +64,8 @@ module HipsterSqlToHbase
     # Transforms itself into a JSON object.
     # 
     # === example:
-    # user = <b>HipsterSqlToHbase</b>::<b>ResultTree</b>.<tt>new({...})</tt>
-    #
-    # user.to_json #=> {:user => {:user_name => 'bob', :pass => 'bob1234', ...}}
+    #   user = HipsterSqlToHbase::ResultTree.new({...})
+    #   user.to_json #=> {:user => {:user_name => 'bob', :pass => 'bob1234', ...}}
     def to_json
       HipsterSqlToHbase::ResultTreeToJsonConverter.new().convert self
     end
@@ -76,9 +74,8 @@ module HipsterSqlToHbase
     # Short for running .to_hbase and then sending the result to the executor.
     # 
     # === example:
-    # my_call = <b>HipsterSqlToHbase</b>::<b>ResultTree</b>.<tt>new({...})</tt>
-    #
-    # my_call.execute 
+    #   my_call = HipsterSqlToHbase::ResultTree.new({...})
+    #   my_call.execute 
     #
     # <em>if no arguments are passed the executor will use any previously set host 
     # and port.</em>
@@ -91,8 +88,10 @@ module HipsterSqlToHbase
     # Generate a Treetop syntax tree from a valid, SQL string.
     #
     # === example:
-    # <b>HipsterSqlToHbase</b>.<tt>parse_syntax</tt> "INSERT INTO users (user,password) VALUES ('user1','pass123'),('user2','2girls1pass')" #=>
-    # #<Class:#<Treetop::Runtime::SyntaxNode:0x3274c98>>
+    #   HipsterSqlToHbase.parse_syntax "INSERT INTO users (user,password) VALUES ('user1','pass123'),('user2','2girls1pass')"
+    #
+    # === outputs:
+    #   #<Class:#<Treetop::Runtime::SyntaxNode:0x3274c98>>
     def parse_syntax(string)
       HipsterSqlToHbase::SyntaxParser.new.parse(string.squish)
     end
@@ -100,7 +99,7 @@ module HipsterSqlToHbase
     # Generate a <b>HipsterSqlToHbase</b>::<b>ResultTree</b> from a valid, SQL string.
     #
     # === example:
-    # <b>HipsterSqlToHbase</b>.<tt>parse_tree</tt> "SELECT user,password FROM users WHERE id=1"
+    #   HipsterSqlToHbase.parse_tree "SELECT user,password FROM users WHERE id=1"
     #
     # === outputs:
     #   {
@@ -122,7 +121,7 @@ module HipsterSqlToHbase
     # Generate a <b>HipsterSqlToHbase</b>::<b>ThriftCallGroup</b> from a valid, SQL string.
     #
     # === example:
-    # <b>HipsterSqlToHbase</b>.<tt>parse</tt> "INSERT INTO `users` (`user`,`pass`) VALUES ('andy','w00dy'),('zaphod','b33bl3br0x')"
+    #    HipsterSqlToHbase.parse "INSERT INTO `users` (`user`,`pass`) VALUES ('andy','w00dy'),('zaphod','b33bl3br0x')"
     #
     # === outputs:
     #    [

@@ -57,7 +57,8 @@ grammar SQLKeyValuePair
     equals / 
     not_equals / 
     less_than / 
-    greater_than
+    greater_than /
+    like
   end
 
   rule less_than_or_equal
@@ -82,5 +83,9 @@ grammar SQLKeyValuePair
 
   rule equals
     "="   {   def eval;  :"="    end }
+  end
+  
+  rule like
+    "LIKE"   {   def eval;  :"LIKE"    end }
   end
 end

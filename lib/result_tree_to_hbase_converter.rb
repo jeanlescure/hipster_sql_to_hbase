@@ -49,8 +49,14 @@ module HipsterSqlToHbase
     
     # When SQL sentence is a SELECT query generate the Thrift filters according
     # to the specified query values.
-    def select_sentence
+    def select_sentence(hash)
+      thrift_method = "getRowsByScanner"
+      thrift_table = hash[:from]
+      thrift_columns = hash[:select]
+      thrift_filters = recurse_where(hash[:where])
+      puts thrift_filters
       
+      HipsterSqlToHbase::ThriftCallGroup.new([{:method => thrift_method,:arguments => [thrift_table,thrift_columns,thrift_filters,{}]}])
     end
     
     # When SQL sentence is a CREATE TABLE query generate the Thrift column descriptors/families
@@ -60,11 +66,43 @@ module HipsterSqlToHbase
     end
     
     private
-    def qualifier_filters_from_cols(cols)
-      
+    
+    # Format the scanner filter for thrift based on the where clause(s)
+    # of a SELECT query.
+    def recurse_where(where_arr)
+      result_arr = []
+      where_arr.each do |val|
+        if val.is_a? Hash
+          result_arr << filters_from_key_value_pair(val)
+        elsif val.is_a? Array
+          result_arr << "(#{recurse_where(val)})"
+        elsif val.is_a? String
+          result_arr << val
+        else
+          raise "Recursive where undefined error."
+        end
+      end
+      result_arr.join(" ")
     end
-    def value_filters_from_vals(vals)
-      
+    
+    # Generate a Thrift QualifierFilter and ValueFilter from key value pair.
+    def filters_from_key_value_pair(kvp)
+      if (kvp[:condition].to_s != "LIKE")
+        "(ValueFilter(#{kvp[:condition]},'binary:#{kvp[:value]}') AND DependentColumnFilter('#{kvp[:column]}',''))"
+      else
+        kvp[:value] = Regexp.escape(kvp[:value])
+        kvp[:value].sub!(/^%/,"^.*")
+        kvp[:value].sub!(/%$/,".*$")
+        while kvp[:value].match(/([^\\]{1,1})%/)
+          kvp[:value].sub!(/([^\\]{1,1})%/,"#{$1}.*?")
+        end
+        kvp[:value].sub!(/^_/,"^.")
+        kvp[:value].sub!(/_$/,".$")
+        while kvp[:value].match(/([^\\]{1,1})_/)
+          kvp[:value].sub!(/([^\\]{1,1})_/,"#{$1}.")
+        end
+        "(ValueFilter(=,'regexstring:#{kvp[:value]}') AND DependentColumnFilter('#{kvp[:column]}',''))"
+      end
     end
     
   end
