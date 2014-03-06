@@ -1,6 +1,6 @@
 ![hipster_sql_to_hbase logo](https://github.com/jeanlescure/hipster_sql_to_hbase/raw/master/misc/hipster_sql_to_hbase_logo.png)
 
-# Hipster SQL To HBase
+# Hipster SQL To HBase [![Code Climate](https://codeclimate.com/github/jeanlescure/hipster_sql_to_hbase.png)](https://codeclimate.com/github/jeanlescure/hipster_sql_to_hbase)
 ### parsing sql to hbase (thrift) before it was cool
 
 This project was born out of the need to migrate rapidly and efficiently a MySQL based application over to Hadoop's own HBase.
