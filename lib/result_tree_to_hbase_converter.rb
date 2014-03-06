@@ -61,8 +61,17 @@ module HipsterSqlToHbase
     
     # When SQL sentence is a CREATE TABLE query generate the Thrift column descriptors/families
     # in accordance to the specified query values.
-    def create_table_sentence
+    def create_table_sentence(hash)
+      thrift_method = "createTable"
+      thrift_table = hash[:table]
+      thrift_columns = []
+      hash[:columns].each do |col_name|
+        col_descriptor = Hbase::ColumnDescriptor.new
+        col_descriptor.name = col_name
+        thrift_columns << col_descriptor
+      end
       
+      HipsterSqlToHbase::ThriftCallGroup.new([{:method => thrift_method,:arguments => [thrift_table,thrift_columns]}])
     end
     
     private
