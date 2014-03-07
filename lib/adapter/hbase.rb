@@ -13,6 +13,12 @@ module Hbase
   end
   
   class Client
+    def incrementAndReturn(table_name,amount)
+      c_row = get('table_indices','0',table_name,{})[0].value.to_i
+      n_row = c_row+amount
+      mutateRow('table_indices','0',[HBase::Mutation.new(column: table_name, value: n_row.to_s)],{})
+      c_row
+    end
     def getRowsByScanner(table,columns,filters,obj={})
       scan = HBase::TScan.new
       scan.filterString = filters

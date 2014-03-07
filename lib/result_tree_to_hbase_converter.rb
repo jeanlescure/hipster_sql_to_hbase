@@ -9,13 +9,15 @@ module HipsterSqlToHbase
   # This class provides the method necessary to execute the Thrift result
   # generated after parsing the SQL sentence.
   class ThriftCallGroup < Array
-    def initialize(arr)
+    @incr = false
+    def initialize(arr,incr=false)
       arr.each do |v|
         self << v
       end
+      @incr = incr
     end
     def execute(host=nil,port=nil)
-      HipsterSqlToHbase::Executor.new().execute(self,host,port)
+      HipsterSqlToHbase::Executor.new().execute(self,host,port,@incr)
     end
   end
   
@@ -44,7 +46,7 @@ module HipsterSqlToHbase
         end
         thrift_calls << {:method => thrift_method,:arguments => [thrift_table,thrift_row,thrift_mutations,{}]}
       end
-      HipsterSqlToHbase::ThriftCallGroup.new(thrift_calls)
+      HipsterSqlToHbase::ThriftCallGroup.new(thrift_calls,true)
     end
     
     # When SQL sentence is a SELECT query generate the Thrift filters according

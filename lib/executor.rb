@@ -49,7 +49,7 @@ module HipsterSqlToHbase
     
     # Initialize a Thrift connection to the specified host and port
     # and execute the provided ThriftCallGroup object.
-    def execute(thrift_call_group,host_s=nil,port_n=nil)
+    def execute(thrift_call_group,host_s=nil,port_n=nil,incr=false)
       @@host = host_s if !host_s.nil?
       @@port = port_n if !port_n.nil?
       socket = Thrift::Socket.new(@@host, @@port)
@@ -62,11 +62,30 @@ module HipsterSqlToHbase
       
       results = []
       
+      if incr
+        not_incr = true
+        c_row = 0
+      end
+      
       thrift_call_group.each do |thrift_call|
+        if incr
+          if not_incr
+            c_row = increment_table_row_index(thrift_call[:arguments][0],thrift_call_group.length,client) 
+            not_incr = false
+          end
+          c_row += 1
+          thrift_call[:arguments][1] = c_row.to_s 
+        end
         results << client.send(thrift_call[:method],*thrift_call[:arguments])
       end
       
       results
+    end
+    
+    private 
+    
+    def increment_table_row_index(table_name,amount,client)
+      client.incrementAndReturn("index:#{table_name}",amount)
     end
   end
 end
