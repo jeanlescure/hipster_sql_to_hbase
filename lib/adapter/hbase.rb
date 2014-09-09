@@ -21,6 +21,7 @@ module Hbase
     end
     def getRowsByScanner(table,columns,filters,obj={})
       scan = HBase::TScan.new
+      filters = "(RowFilter(>=, 'binary:0'))" if filters == ''
       scan.filterString = filters
       scanner = scannerOpenWithScan(table, scan, obj)
       
@@ -41,11 +42,11 @@ module Hbase
         row_results = []
         if columns[0] == '*'
           getRow(table,row,{})[0].columns.each do |val|
-            row_results << val.value
+            row_results << { 'id' => row, val[0] => val[1].value }
           end
         else
           columns.each do |col|
-            row_results << getRow(table,row,{})[0].columns["#{col}:"].value rescue row_results << nil
+            row_results << { 'id' => row, col => getRow(table,row,{})[0].columns["#{col}:"].value } rescue row_results << nil
           end
         end
         results << row_results

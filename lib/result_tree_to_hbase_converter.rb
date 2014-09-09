@@ -55,8 +55,7 @@ module HipsterSqlToHbase
       thrift_method = "getRowsByScanner"
       thrift_table = hash[:from]
       thrift_columns = hash[:select]
-      thrift_filters = recurse_where(hash[:where])
-      puts thrift_filters
+      thrift_filters = recurse_where(hash[:where] || [])
       
       HipsterSqlToHbase::ThriftCallGroup.new([{:method => thrift_method,:arguments => [thrift_table,thrift_columns,thrift_filters,{}]}])
     end
