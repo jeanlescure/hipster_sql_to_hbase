@@ -19,28 +19,23 @@ module Hbase
       mutateRow('table_indices','0',[HBase::Mutation.new(column: table_name, value: n_row.to_s)],{})
       c_row
     end
-    def getRowsByScanner(table,columns,filters,obj={})
+    def getRowsByScanner(table,columns,filters,limit,obj={})
       scan = HBase::TScan.new
       filters = "(RowFilter(>=, 'binary:0'))" if filters == ''
       scan.filterString = filters
       scanner = scannerOpenWithScan(table, scan, obj)
       
       results = []
-      scan_end = false
+      scan_limit = limit || 100000
       
-      while !scan_end
-        scan_result = scannerGet(scanner)
-        if scan_result.length > 0
-          if columns[0] == '*'
-            results << scan_result[0].columns.each{ |k,v| scan_result[0].columns[k] = v.value }
-          else
-            row_result = {}
-            columns.each{ |k| row_result[k] = scan_result[0].columns[k].value }
-            results << row_result
-          end
+      rows = scannerGetList(scanner, scan_limit)
+      rows.each do |row|
+        if columns[0] == '*'
+          results << row.columns.each{ |k,v| row.columns[k] = v.value }
         else
-          scannerClose(scanner)
-          scan_end = true
+          row_result = {}
+          columns.each{ |k| row_result[k] = row.columns[k].value }
+          results << row_result
         end
       end
       

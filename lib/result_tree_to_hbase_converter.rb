@@ -56,8 +56,9 @@ module HipsterSqlToHbase
       thrift_table = hash[:from]
       thrift_columns = hash[:select]
       thrift_filters = recurse_where(hash[:where] || [])
+      thrift_limit = hash[:limit]
       
-      HipsterSqlToHbase::ThriftCallGroup.new([{:method => thrift_method,:arguments => [thrift_table,thrift_columns,thrift_filters,{}]}])
+      HipsterSqlToHbase::ThriftCallGroup.new([{:method => thrift_method,:arguments => [thrift_table,thrift_columns,thrift_filters,thrift_limit,{}]}])
     end
     
     # When SQL sentence is a CREATE TABLE query generate the Thrift column descriptors/families
