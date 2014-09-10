@@ -97,8 +97,10 @@ module HipsterSqlToHbase
     
     # Generate a Thrift QualifierFilter and ValueFilter from key value pair.
     def filters_from_key_value_pair(kvp)
+      kvp[:qualifier] = kvp[:column].split(':')
+      kvp[:column] = kvp[:qualifier].shift
       if (kvp[:condition].to_s != "LIKE")
-        "(ValueFilter(#{kvp[:condition]},'binary:#{kvp[:value]}') AND DependentColumnFilter('#{kvp[:column]}',''))"
+        "(SingleColumnValueFilter('#{kvp[:column]}','#{kvp[:qualifier].join(':')}',#{kvp[:condition]},'binary:#{kvp[:value]}',true,true))"
       else
         kvp[:value] = Regexp.escape(kvp[:value])
         kvp[:value].sub!(/^%/,"^.*")
@@ -111,7 +113,7 @@ module HipsterSqlToHbase
         while kvp[:value].match(/([^\\]{1,1})_/)
           kvp[:value].sub!(/([^\\]{1,1})_/,"#{$1}.")
         end
-        "(ValueFilter(=,'regexstring:#{kvp[:value]}') AND DependentColumnFilter('#{kvp[:column]}',''))"
+        "(SingleColumnValueFilter('#{kvp[:column]}','#{kvp[:qualifier].join(':')}',=,'regexstring:#{kvp[:value]}',true,true))"
       end
     end
     

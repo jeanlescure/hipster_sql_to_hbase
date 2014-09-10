@@ -20,6 +20,7 @@ module Hbase
       c_row
     end
     def getRowsByScanner(table,columns,filters,obj={})
+      start_time = Time.now
       scan = HBase::TScan.new
       filters = "(RowFilter(>=, 'binary:0'))" if filters == ''
       scan.filterString = filters
@@ -27,31 +28,25 @@ module Hbase
       
       results = []
       scan_end = false
-      rows = []
       
       while !scan_end
         scan_result = scannerGet(scanner)
         if scan_result.length > 0
-          rows << scan_result[0].row
+          if columns == '*'
+            results << scan_result[0].columns.each{ |k,v| scan_result[0].columns[k] = v.value }
+          else
+            row_result = {}
+            columns.each{ |k| row_result[k] = scan_result[0].columns[k].value }
+            results << row_result
+          end
         else
+          scannerClose(scanner)
           scan_end = true
         end
       end
-      
-      rows.each do |row|
-        row_results = []
-        if columns[0] == '*'
-          getRow(table,row,{})[0].columns.each do |val|
-            row_results << { 'id' => row, val[0] => val[1].value }
-          end
-        else
-          columns.each do |col|
-            row_results << { 'id' => row, col => getRow(table,row,{})[0].columns["#{col}:"].value } rescue row_results << nil
-          end
-        end
-        results << row_results
-      end
-      
+#      
+      end_time = Time.now
+      results << (end_time - start_time) * 1000
       results
     end
   end
