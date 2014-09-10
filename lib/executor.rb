@@ -79,7 +79,7 @@ module HipsterSqlToHbase
         results << client.send(thrift_call[:method],*thrift_call[:arguments])
       end
       
-      results
+      results.flatten
     end
     
     private 

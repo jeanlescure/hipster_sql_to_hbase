@@ -20,7 +20,6 @@ module Hbase
       c_row
     end
     def getRowsByScanner(table,columns,filters,obj={})
-      start_time = Time.now
       scan = HBase::TScan.new
       filters = "(RowFilter(>=, 'binary:0'))" if filters == ''
       scan.filterString = filters
@@ -44,9 +43,7 @@ module Hbase
           scan_end = true
         end
       end
-#      
-      end_time = Time.now
-      results << (end_time - start_time) * 1000
+      
       results
     end
   end
