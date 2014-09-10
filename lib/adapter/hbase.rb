@@ -31,7 +31,7 @@ module Hbase
       while !scan_end
         scan_result = scannerGet(scanner)
         if scan_result.length > 0
-          if columns == '*'
+          if columns[0] == '*'
             results << scan_result[0].columns.each{ |k,v| scan_result[0].columns[k] = v.value }
           else
             row_result = {}
