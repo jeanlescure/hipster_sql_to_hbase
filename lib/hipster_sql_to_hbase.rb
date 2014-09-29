@@ -47,9 +47,7 @@ module HipsterSqlToHbase
   # as to be executed as a Thrift method.
   class ResultTree < Hash
     def initialize(hash)
-      hash.each do |k,v|
-        self[k] = v
-      end
+      hash.each { |k,v| self[k] = v }
     end
     
     # Transforms itself into an HBase (Thrift) method.
