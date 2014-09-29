@@ -1,0 +1,34 @@
+grammar SQLCreateIndex
+  include SQLRowSupport
+
+  rule create_index
+    "CREATE" optional_unique SPACES "INDEX" SPACES 
+    index_name SPACES "ON" SPACES 
+    table_name optional_spaces OPEN_PARENS optional_spaces column_name optional_spaces CLOSE_PARENS {
+      def query_type
+        :create_index
+      end
+      def tree
+        {
+          :index => index_name.eval,
+          :table => table_name.eval,
+          :column => column_name.eval
+        }
+      end
+    }
+  end
+  
+  rule optional_unique
+    SPACES "UNIQUE" {
+      def eval
+        true
+      end
+    }
+    /
+    EMPTY_STRING {
+      def eval
+        false
+      end
+    }
+  end
+end
