@@ -94,6 +94,31 @@ module HipsterSqlToHbase
       HipsterSqlToHbase::SyntaxParser.new.parse(string.squish)
     end
     
+    # Generate a Hash from a valid, SQL string.
+    #
+    # === example:
+    #   HipsterSqlToHbase.parse_hash "SELECT user,password FROM users WHERE id=1"
+    #
+    # === outputs:
+    #   {
+    #    :query_type=>:select,
+    #    :query_hash=>{
+    #      :select=>["user", "password"],
+    #      :from=>"users",
+    #      :where=>[{:column=>"id", :condition=>:"=", :value=>1}],
+    #      :limit=>nil,
+    #      :order_by=>nil
+    #    }
+    #   }
+    def parse_hash(string)
+      syntax_tree = parse_syntax(string)
+      return nil if syntax_tree.nil?
+      { 
+        :query_type => syntax_tree.query_type, 
+        :query_hash => syntax_tree.tree
+      }
+    end
+    
     # Generate a <b>HipsterSqlToHbase</b>::<b>ResultTree</b> from a valid, SQL string.
     #
     # === example:
@@ -110,10 +135,10 @@ module HipsterSqlToHbase
     #      :order_by=>nil
     #    }
     #   }
+    #
+    # === Note: the main difference between **parse_tree** and **parse_hash** is that a **ResultTree** can be further converted to Thrift calls while a **Hash** cannot.
     def parse_tree(string)
-      syntax_tree = parse_syntax(string)
-      return nil if syntax_tree.nil?
-      HipsterSqlToHbase::ResultTree.new({:query_type => syntax_tree.query_type, :query_hash => syntax_tree.tree})
+      HipsterSqlToHbase::ResultTree.new(parse_hash(string))
     end
     
     # Generate a <b>HipsterSqlToHbase</b>::<b>ThriftCallGroup</b> from a valid, SQL string.
