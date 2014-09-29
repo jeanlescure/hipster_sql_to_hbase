@@ -11,7 +11,7 @@ grammar SQLSelect
   rule select_expression
     select
     from 
-    where_condition_or_empty
+    where_tree
     limit_condition_or_empty
     order_by_condition_or_empty
     {
@@ -21,58 +21,21 @@ grammar SQLSelect
 
           :select => select.eval,
           :from   => from.eval,
-          :where  => where_condition_or_empty.eval,
+          :where  => where_tree.where_condition_or_empty.eval,
           :limit  => limit_condition_or_empty.eval,
           :order_by => order_by_condition_or_empty.eval
         })
       end
+      
       def query_type
         :select
       end
-      def build_tree(init_clause)
-        clauses = []
-        clause = init_clause
-        while clause
-          parens = clause.OPEN_PARENS rescue false
-          if parens
-            clauses << build_tree(clause.where_clause)
-            break
-          end
-          
-          clause_obj = false
-          begin
-            clause_obj = clause.clause1
-          rescue
-            clause_obj = clause if clause.one_column_name rescue false
-          end
-          if clause_obj
-            clauses << {
-              :column => clause_obj.one_column_name.eval,
-              :condition => clause_obj.joiner_or_null.condition_joiner.eval,
-              :value => clause_obj.joiner_or_null.primitive.eval
-            }
-            
-            dc_joiner = clause.disjunction_or_conjunction_joiner.text_value rescue dc_joiner = false
-            clauses << dc_joiner if dc_joiner
-            
-            clause = clause.clause2 rescue false
-            if !clause
-              clause = clause.where_clause rescue false
-            end
-          else
-            clause = clause.where_clause rescue false
-          end
-        end
-        clauses
-      end
+      
       def tree
-        init_clause = self.where_condition_or_empty.where_condition.where_clause rescue false
-          
-        where_result = (init_clause) ? build_tree(init_clause) : nil
         {
           :select => select.columns,
           :from   => from.tables,
-          :where  => where_result,
+          :where  => where_tree.eval,
           :limit  => limit_condition_or_empty.eval,
           :order_by => order_by_condition_or_empty.eval
         }

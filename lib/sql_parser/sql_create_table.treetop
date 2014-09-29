@@ -3,7 +3,9 @@ grammar SQLCreateTable
   include SQLDataTypes
 
   rule create_table
-    "CREATE" SPACE+ "TABLE" SPACE+ table_name SPACE+ OPEN_PARENS columns_and_datatypes CLOSE_PARENS {
+    "CREATE" SPACES "TABLE" SPACES 
+    table_name SPACES OPEN_PARENS columns_and_datatypes CLOSE_PARENS
+    optional_engine {
       def eval
         options = {
           :columns    => columns_and_datatypes.eval,
@@ -38,10 +40,44 @@ grammar SQLCreateTable
   end
 
   rule column_with_datatype
-    SPACE* column_name SPACE+ datatype SPACE* {
+    optional_spaces column_name SPACES datatype optional_column_features? optional_spaces {
       def eval
         [column_name.eval]
       end
     }
+  end
+  
+  rule optional_column_features
+    optional_column_feature optional_column_feature
+    /
+    optional_column_feature
+  end
+  
+  rule optional_column_feature
+    optional_primary_key /
+    optional_auto_increment /
+    optional_not_null
+  end
+  
+  rule optional_primary_key
+    SPACES "PRIMARY" SPACES "KEY"
+    /
+    SPACES "primary" SPACES "key"
+  end
+  
+  rule optional_auto_increment
+    SPACES "AUTO_INCREMENT"
+    /
+    SPACES "auto_increment"
+  end
+  
+  rule optional_not_null
+    SPACES (NOT_KEYWORD SPACES)? NULL_KEYWORD
+  end
+  
+  rule optional_engine
+    SPACES "ENGINE=InnoDB"
+    /
+    EMPTY_STRING
   end
 end

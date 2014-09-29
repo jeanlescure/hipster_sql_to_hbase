@@ -3,24 +3,29 @@ grammar DropTable
   include SQLRowSupport
 
   rule drop_table
-    "DROP" (temporary)? SPACE "TABLE" SPACE
+    "DROP" (temporary)? SPACES "TABLE" SPACES
     table_name
     (restrict / cascade)? {
-      def eval
-        DataStore.drop_table(table_name.eval.to_sym)
+      def query_type
+        :drop_table
+      end
+      def tree
+        {
+          :table => table_name.eval
+        }
       end
     }
   end
 
   rule temporary
-    SPACE "TEMPORARY"
+    SPACES "TEMPORARY"
   end
 
   rule restrict
-    SPACE "RESTRICT"
+    SPACES "RESTRICT"
   end
 
   rule cascade
-    SPACE "CASCADE"
+    SPACES "CASCADE"
   end
 end

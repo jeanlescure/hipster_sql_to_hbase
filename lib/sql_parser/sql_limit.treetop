@@ -2,6 +2,6 @@ grammar SQLLimit
   include SQLPrimitives
 
   rule limit
-    "LIMIT" SPACE integer { def eval; integer.eval; end }
+    "LIMIT" SPACES integer { def eval; integer.eval; end }
   end
 end

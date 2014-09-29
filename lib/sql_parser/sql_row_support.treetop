@@ -46,6 +46,10 @@ grammar SQLRowSupport
   rule column_name
     backtick_string / column_string / all_columns
   end
+  
+  rule index_name
+    column_name
+  end
 
   # TODO: Clean this up
   rule table_name

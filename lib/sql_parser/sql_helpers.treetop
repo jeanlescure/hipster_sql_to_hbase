@@ -1,6 +1,53 @@
 grammar SQLHelpers
+
+  rule where_tree
+    where_condition_or_empty {
+      def eval
+        init_clause = where_condition.where_clause rescue false
+          
+        (init_clause) ? build_where_tree(init_clause) : nil
+      end
+      def build_where_tree(init_clause)
+        clauses = []
+        clause = init_clause
+        while clause
+          parens = clause.OPEN_PARENS rescue false
+          if parens
+            clauses << build_where_tree(clause.where_clause)
+            break
+          end
+          
+          clause_obj = false
+          begin
+            clause_obj = clause.clause1
+          rescue
+            clause_obj = clause if clause.one_column_name rescue false
+          end
+          if clause_obj
+            clauses << {
+              :column => clause_obj.one_column_name.eval,
+              :condition => clause_obj.joiner_or_null.condition_joiner.eval,
+              :value => clause_obj.joiner_or_null.primitive.eval
+            }
+            
+            dc_joiner = clause.disjunction_or_conjunction_joiner.text_value rescue dc_joiner = false
+            clauses << dc_joiner if dc_joiner
+            
+            clause = clause.clause2 rescue false
+            if !clause
+              clause = clause.where_clause rescue false
+            end
+          else
+            clause = clause.where_clause rescue false
+          end
+        end
+        clauses
+      end
+    }
+  end
+  
   rule where_condition_or_empty
-    SPACE where_condition {
+    SPACES where_condition {
       def eval
         where_condition.eval
       end

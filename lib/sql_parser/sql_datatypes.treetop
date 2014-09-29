@@ -4,7 +4,12 @@ grammar SQLDataTypes
   rule datatype
     bit_field /
     numeric_type /
-    char_type
+    char_type /
+    date_type
+  end
+  
+  rule date_type
+    DATETIME_KEYWORD
   end
   
   rule char_type

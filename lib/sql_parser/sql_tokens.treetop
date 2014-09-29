@@ -2,6 +2,10 @@ grammar SQLTokens
   rule SPACE
     " "
   end
+  
+  rule SPACES
+    SPACE+
+  end
 
   rule OPEN_PARENS
     '('
@@ -55,10 +59,6 @@ grammar SQLTokens
     [a-zA-Z]
   end
   
-  rule NON_QUOTE_CHARS
-    [^'"]
-  end
-  
   rule DIGIT
     [0-9]
   end
@@ -73,53 +73,101 @@ grammar SQLTokens
 
   rule REAL_KEYWORD
     "REAL"
+    /
+    "real"
   end
 
   rule DOUBLE_KEYWORD
     "DOUBLE"
+    /
+    "double"
   end
 
   rule FLOAT_KEYWORD
     "FLOAT"
+    /
+    "float"
   end
 
   rule DECIMAL_KEYWORD
     "DECIMAL"
+    /
+    "decimal"
   end
 
   rule NUMERIC_KEYWORD
     "NUMERIC"
+    /
+    "numeric"
   end
   
   rule SMALL_INT_KEYWORD
     "SMALLINT"
+    /
+    "smallint"
   end
 
   rule TINY_INT_KEYWORD
     "TINYINT"
+    /
+    "tinyint"
   end
 
   rule INT_KEYWORD
     "INT"
+    /
+    "int"
   end
 
   rule INTEGER_KEYWORD
     "INTEGER"
+    /
+    "integer"
   end
   
   rule ZEROFILL_KEYWORD
     "ZEROFILL"
+    /
+    "zerofill"
   end
   
   rule UNSIGNED_KEYWORD
     "UNSIGNED"
+    /
+    "unsigned"
   end
   
   rule BIG_INT_KEYWORD
     "BIGINT"
+    /
+    "bigint"
   end
   
   rule VARCHAR_KEYWORD
     "VARCHAR"
+    /
+    "varchar"
+  end
+
+  rule DATETIME_KEYWORD
+    "DATETIME"
+    /
+    "datetime"
+  end
+  
+  rule NOT_KEYWORD
+    "NOT"
+    /
+    "not"
+  end
+  
+  rule NULL_KEYWORD
+    "NULL"
+    /
+    "null"
+  end
+  
+  rule NON_QUOTE_CHARS
+    [^'"]
   end
 end

@@ -4,9 +4,9 @@ grammar SQLInsert
   include SQLHelpers
 
   rule insert
-    "INSERT" SPACE ((low_priority / delayed / high_priority) SPACE)? (ignore SPACE)?
-    ("INTO" SPACE)? table_name SPACE? optional_list_of_columns
-    ("VALUES" / "VALUE") SPACE* groups_of_values {
+    "INSERT" SPACES ((low_priority / delayed / high_priority) SPACES)? (ignore SPACES)?
+    ("INTO" SPACES)? table_name SPACES optional_list_of_columns
+    ("VALUES" / "VALUE") optional_spaces groups_of_values {
       def query_type
         :insert
       end
@@ -41,7 +41,7 @@ grammar SQLInsert
   end
 
   rule optional_list_of_columns
-    list_of_columns SPACE {
+    list_of_columns SPACES {
       def eval; list_of_columns.eval; end
     }
     / 
@@ -67,19 +67,19 @@ grammar SQLInsert
   end
 
   rule list_of_columns
-    "(" SPACE? one_or_more_column_names SPACE? ")" { 
+    "(" optional_spaces one_or_more_column_names optional_spaces ")" { 
       def eval; one_or_more_column_names.eval; end
     }
   end
   
   rule groups_of_values
-    OPEN_PARENS SPACE* list_of_values SPACE* CLOSE_PARENS SPACE* "," SPACE* groups_of_values {
+    OPEN_PARENS optional_spaces list_of_values optional_spaces CLOSE_PARENS optional_spaces "," optional_spaces groups_of_values {
       def eval
         [list_of_values.eval] + groups_of_values.eval
       end
     }
     /
-    OPEN_PARENS SPACE* list_of_values SPACE* CLOSE_PARENS {
+    OPEN_PARENS optional_spaces list_of_values optional_spaces CLOSE_PARENS {
       def eval
         [list_of_values.eval]
       end
@@ -93,7 +93,7 @@ grammar SQLInsert
   end
 
   rule one_or_more_values
-    insert_value SPACE? "," SPACE? one_or_more_values { 
+    insert_value optional_spaces "," optional_spaces one_or_more_values { 
       def eval
         [insert_value.eval, one_or_more_values.eval].flatten
       end
@@ -111,7 +111,7 @@ grammar SQLInsert
   end
 
   rule default_value
-    "DEFAULT" SPACE* OPEN_PARENS SPACE* column_name SPACE* CLOSE_PARENS { 
+    "DEFAULT" optional_spaces OPEN_PARENS optional_spaces column_name optional_spaces CLOSE_PARENS { 
       def eval; "DEFAULT"; end
     }
   end

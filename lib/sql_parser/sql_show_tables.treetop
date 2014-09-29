@@ -4,23 +4,109 @@ grammar SQLShowTables
   include SQLWhereCondition
 
   rule show_tables
-    "SHOW" SPACE (full)? "TABLES" from_table?
-    (like_pattern / (SPACE where_condition))? {
+    "SHOW" SPACES optional_full 
+    tables_or_fields 
+    optional_from_table
+    optional_like_or_where {
+      def query_type
+        :show
+      end
+      
+      def tree
+        like_where = optional_like_or_where.eval
+        {
+          :show => tables_or_fields.eval,
+          :full => optional_full.eval,
+          :from => optional_from_table.eval,
+          :like => like_where[:like],
+          :where => like_where[:where]
+        }
+      end
+    }
+  end
+  
+  rule tables_or_fields
+    "TABLES" {
       def eval
-        Expressions::TableDisplayer.new(Guillotine::DataStore)
+        "tables"
+      end
+    }
+    /
+    "FIELDS" {
+      def eval
+        "fields"
+      end
+    }
+    /
+    "KEYS" {
+      def eval
+        "keys"
+      end
+    }
+  end
+  
+  rule optional_like_or_where
+    EMPTY_STRING like_pattern {
+      def eval
+        {
+          :like => like_pattern.eval,
+          :where => nil
+        }
+      end
+    }
+    / 
+    EMPTY_STRING where_tree {
+      def eval
+        {
+          :like => nil,
+          :where => where_tree.eval
+        }
+      end
+    }
+    /
+    EMPTY_STRING {
+      def eval
+        {
+          :like => nil,
+          :where => nil
+        }
       end
     }
   end
 
-  rule full
-    "FULL" SPACE
+  rule optional_full
+    "FULL" SPACES {
+      def eval
+        true
+      end
+    }
+    /
+    EMPTY_STRING {
+      def eval
+        false
+      end
+    }
   end
 
-  rule from_table
-    SPACE "FROM" SPACE table_name
+  rule optional_from_table
+    SPACES "FROM" SPACES table_name {
+      def eval
+        table_name.eval
+      end
+    }
+    /
+    EMPTY_STRING {
+      def eval
+        nil
+      end
+    }
   end
 
   rule like_pattern
-    SPACE "LIKE" SPACE single_quoted_string
+    SPACES "LIKE" SPACES single_quoted_string {
+      def eval
+        single_quoted_string.eval
+      end
+    }
   end
 end

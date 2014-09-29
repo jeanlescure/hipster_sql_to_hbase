@@ -6,23 +6,44 @@ grammar SQLTransaction
   end
 
   rule start_transaction
-    "START" SPACE "TRANSACTION" with_consistent_snapshot?
+    "START" SPACES "TRANSACTION" with_consistent_snapshot? {
+      def query_type
+        :start
+      end
+      def tree
+        { :start => nil }
+      end
+    }
   end
 
   rule with_consistent_snapshot
-    SPACE "WITH" SPACE "CONSISTENT" SPACE "SNAPSHOT"
+    SPACES "WITH" SPACES "CONSISTENT" SPACES "SNAPSHOT"
   end
 
   rule begin
-    "BEGIN" work?
+    "BEGIN" work? {
+      def query_type
+        :begin
+      end
+      def tree
+        { :begin => nil }
+      end
+    }
   end
 
   rule work
-    SPACE "WORK"
+    SPACES "WORK"
   end
 
   rule commit
-    "COMMIT" optional_transactional_clauses
+    "COMMIT" optional_transactional_clauses {
+      def query_type
+        :commit
+      end
+      def tree
+        { :commit => nil }
+      end
+    }
   end
 
   rule optional_transactional_clauses
@@ -30,14 +51,21 @@ grammar SQLTransaction
   end
 
   rule chain
-    SPACE "AND" SPACE ("NO" SPACE)? "CHAIN"
+    SPACES "AND" SPACES ("NO" SPACES)? "CHAIN"
   end
 
   rule release
-    SPACE ("NO" SPACE)? "RELEASE"
+    SPACES ("NO" SPACES)? "RELEASE"
   end
 
   rule rollback
-    "ROLLBACK" optional_transactional_clauses
+    "ROLLBACK" optional_transactional_clauses {
+      def query_type
+        :rollback
+      end
+      def tree
+        { :rollback => nil }
+      end
+    }
   end
 end
