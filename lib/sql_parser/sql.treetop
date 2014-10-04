@@ -6,6 +6,7 @@ grammar SQL
   include SQLTransaction
   include SQLInsert
   include SQLShowTables
+  include SQLShowCreate
   include SQLCreateTable
   include SQLCreateIndex
 
@@ -17,6 +18,7 @@ grammar SQL
     transaction_statement /
     insert                /
     show_tables           /
+    show_create           /
     create_table          /
     create_index
   end

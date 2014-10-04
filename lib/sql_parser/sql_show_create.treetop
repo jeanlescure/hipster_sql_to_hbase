@@ -1,0 +1,34 @@
+grammar SQLShowCreate
+  include SQLPrimitives
+  include SQLRowSupport
+  
+  rule show_create
+    "SHOW" SPACES "CREATE" SPACES table_or_db SPACES table_name {
+      def query_type
+        :show
+      end
+      
+      def tree
+        {
+          :show => "create",
+          :table_or_db => table_or_db.eval,
+          :name => table_name.eval
+        }
+      end
+    }
+  end
+  
+  rule table_or_db
+    "TABLE" {
+      def eval
+        "table"
+      end
+    }
+    / 
+    "DATABASE" {
+      def eval
+        "db"
+      end
+    }
+  end
+end
