@@ -1,4 +1,4 @@
-grammar DropTable
+grammar SQLDropTable
   include SQLPrimitives
   include SQLRowSupport
 

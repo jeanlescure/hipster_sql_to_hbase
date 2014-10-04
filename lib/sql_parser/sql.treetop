@@ -2,7 +2,7 @@ grammar SQL
   include SQLSelect
   include SQLDelete
   include SQLTruncate
-  include DropTable #TODO: Fix my name
+  include SQLDropTable
   include SQLTransaction
   include SQLInsert
   include SQLShowTables
