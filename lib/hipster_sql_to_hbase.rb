@@ -112,11 +112,16 @@ module HipsterSqlToHbase
     #   }
     def parse_hash(string)
       syntax_tree = parse_syntax(string)
+      
       return nil if syntax_tree.nil?
-      { 
+      
+      result = { 
         :query_type => syntax_tree.query_type, 
         :query_hash => syntax_tree.tree
       }
+      result[:query_hash][:create_sentence] = string if syntax_tree.query_type == :create_table
+      
+      result
     end
     
     # Generate a <b>HipsterSqlToHbase</b>::<b>ResultTree</b> from a valid, SQL string.
