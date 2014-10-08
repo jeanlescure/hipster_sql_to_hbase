@@ -56,6 +56,7 @@ grammar SQLCreateTable
   rule optional_column_feature
     optional_primary_key /
     optional_auto_increment /
+    optional_default /
     optional_not_null
   end
   
@@ -63,6 +64,12 @@ grammar SQLCreateTable
     SPACES "PRIMARY" SPACES "KEY"
     /
     SPACES "primary" SPACES "key"
+  end
+  
+  rule optional_default
+    SPACES "DEFAULT" SPACES (quoted_string / NULL_KEYWORD / MINUS_OR_DIGIT+)
+    /
+    SPACES "default" SPACES (quoted_string / NULL_KEYWORD / MINUS_OR_DIGIT+)
   end
   
   rule optional_auto_increment

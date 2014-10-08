@@ -44,15 +44,23 @@ grammar SQLTokens
   end
 
   rule BACKTICK
-    "`"
+    "`" { def eval; nil; end }
   end
   
   rule COMMA
     ","
   end
   
+  rule DOT
+    "." { def eval; "."; end }
+  end
+  
   rule STRING_CHARS
     [0-9a-zA-Z\$_:]
+  end
+  
+  rule VALID_NON_NUM_CHARS
+    [a-zA-Z\$_:]
   end
   
   rule ALPHA_CHARS
@@ -63,12 +71,12 @@ grammar SQLTokens
     [0-9]
   end
   
-  rule DASH
-    "-" { def eval; nil; end }
+  rule STRING_CHARS_W_NON_XCLUSIVE_NUMS
+    DIGIT* VALID_NON_NUM_CHARS+ DIGIT*
   end
   
-  rule MINUS_OR_DIGIT
-    DASH / DIGIT
+  rule DASH
+    "-" { def eval; nil; end }
   end
 
   rule REAL_KEYWORD

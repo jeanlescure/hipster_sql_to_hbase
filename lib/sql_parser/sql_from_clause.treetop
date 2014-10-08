@@ -1,5 +1,4 @@
 grammar SQLFromClause
-  include SQLPrimitives
   include SQLRowSupport
 
   rule from
@@ -8,5 +7,11 @@ grammar SQLFromClause
         one_or_more_table_names.eval
       end
     }
+  end
+  
+  rule from_or_empty
+    from
+    /
+    EMPTY_STRING
   end
 end

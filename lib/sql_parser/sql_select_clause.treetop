@@ -1,17 +1,112 @@
 grammar SQLSelectClause
-  include SQLPrimitives
   include SQLRowSupport
 
   rule select
-    "SELECT" SPACES one_or_more_column_names optional_spaces { 
-       def columns
-         result = one_or_more_column_names.eval
-         if result.kind_of?(Array)
-           result
-         else
-           [result]
-         end
-       end 
+    "SELECT" SPACES selectable_list optional_spaces { 
+      def eval
+        result = selectable_list.eval
+        result
+      end 
+    }
+  end
+  
+  rule selectable_list
+    selectables optional_spaces COMMA selectable_list {
+      def eval
+        result = {}
+        one_result = selectables.eval
+        list_result = selectable_list.eval
+        
+        result[:columns] = []
+        result[:columns] += one_result[:columns] unless one_result[:columns].nil?
+        result[:columns] += list_result[:columns] unless list_result[:columns].nil?
+        result.delete(:columns) if result[:columns].empty?
+        
+        result[:numbers] = []
+        result[:numbers] += one_result[:numbers] unless one_result[:numbers].nil?
+        result[:numbers] += list_result[:numbers] unless list_result[:numbers].nil?
+        result.delete(:numbers) if result[:numbers].empty?
+        
+        result[:aliases] = []
+        result[:aliases] += one_result[:aliases] unless one_result[:aliases].nil?
+        result[:aliases] += list_result[:aliases] unless list_result[:aliases].nil?
+        result.delete(:aliases) if result[:aliases].empty?
+        
+        result
+      end
+    }
+    /
+    selectables
+  end
+  
+  rule selectables
+    selectable_columns_with_alias
+    /
+    selectable_columns
+    /
+    selectable_numbers_with_alias
+    /
+    selectable_numbers
+  end
+  
+  rule selectable_columns_with_alias
+    optional_spaces one_or_more_column_name_with_alias {
+      def eval
+        result = {
+          :columns => [],
+          :aliases => []
+        }
+        num_alias_pairs = one_or_more_column_name_with_alias.eval
+        
+        num_alias_pairs.each do |num_alias_pair|
+          result[:columns] << num_alias_pair[:column]
+          result[:aliases] << num_alias_pair[:alias_hash]
+        end
+        
+        result
+      end
+    }
+  end
+  
+  rule selectable_columns
+    optional_spaces one_or_more_column_names {
+      def eval
+        {
+          :columns => one_or_more_column_names.eval
+        }
+      end
+    }
+  end
+  
+  rule selectable_numbers_with_alias
+    optional_spaces one_or_more_number_with_alias {
+      def eval
+        result = {
+          :numbers => [],
+          :aliases => []
+        }
+        num_alias_pairs = one_or_more_number_with_alias.eval
+        
+        num_alias_pairs.each do |num_alias_pair|
+          result[:numbers] << num_alias_pair[:number]
+          result[:aliases] << num_alias_pair[:alias_hash]
+        end
+        
+        result
+      end
+    }
+  end
+  
+  rule selectable_numbers
+    optional_spaces one_or_more_numbers {
+      def eval
+        result_nums = one_or_more_numbers.eval
+        result_nums = [result_nums] unless result_nums.is_a? Array
+        
+        {
+          :numbers => result_nums
+        }
+      end
     }
   end
 end

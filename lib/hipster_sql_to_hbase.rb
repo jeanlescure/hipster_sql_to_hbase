@@ -143,7 +143,13 @@ module HipsterSqlToHbase
     #
     # === Note: the main difference between **parse_tree** and **parse_hash** is that a **ResultTree** can be further converted to Thrift calls while a **Hash** cannot.
     def parse_tree(string)
-      HipsterSqlToHbase::ResultTree.new(parse_hash(string))
+      parsed_hash = parse_hash(string)
+      
+      if parsed_hash.nil?
+        nil
+      else
+        HipsterSqlToHbase::ResultTree.new(parsed_hash)
+      end
     end
     
     # Generate a <b>HipsterSqlToHbase</b>::<b>ThriftCallGroup</b> from a valid, SQL string.

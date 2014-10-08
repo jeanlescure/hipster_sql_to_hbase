@@ -2,39 +2,76 @@ grammar SQLRowSupport
   include SQLPrimitives
 
   rule one_or_more_table_names
-    table_name "," SPACE one_or_more_table_names {
+    table_name COMMA SPACES one_or_more_table_names {
       def eval
         [table_name.eval, one_or_more_table_names.eval]
       end
     } 
     / 
-    table_name
-  end
-
-  rule one_or_more_column_names_with_sort
-    one_column_name_with_sort "," SPACE one_or_more_column_names {
+    EMPTY_STRING table_name {
       def eval
-        result1, result2 = one_column_name.eval, one_or_more_column_names.eval
+        [table_name.eval]
+      end
+    }
+  end
+  
+  rule one_or_more_numbers
+    number optional_spaces COMMA optional_spaces one_or_more_numbers {
+      def eval
+        result1, result2 = number.eval, one_or_more_numbers.eval
+        [result1, result2].flatten
+      end
+    }
+    /
+    EMPTY_STRING number {
+      def eval
+        [number.eval]
+      end
+    }
+  end
+  
+  rule one_number_with_alias
+    number SPACES "AS" SPACES alias_column_name {
+      def eval
+        {
+          :number => number.eval,
+          :alias_hash => {
+            :number => number.eval,
+            :alias => alias_column_name.eval
+          }
+        }
+      end
+    }
+  end
+  
+  rule one_or_more_number_with_alias
+    one_number_with_alias optional_spaces COMMA optional_spaces one_or_more_number_with_alias {
+      def eval
+        result1, result2 = one_number_with_alias.eval, one_or_more_number_with_alias.eval
         [result1, result2].flatten
       end
     }
     / 
-    one_column_name_with_sort
-  end
-
-  rule one_or_more_column_names
-    one_column_name SPACE? "," SPACE? one_or_more_column_names {
+    EMPTY_STRING one_number_with_alias {
       def eval
-        result1, result2 = one_column_name.eval, one_or_more_column_names.eval
-        [result1, result2].flatten
+        [one_number_with_alias.eval]
       end
     }
-    / 
-    one_column_name
   end
+
+  #rule one_or_more_column_names_with_sort
+  #  one_column_name_with_sort COMMA SPACES one_or_more_column_names {
+  #    def eval
+  #      result1, result2 = one_column_name.eval, one_or_more_column_names.eval
+  #      [result1, result2].flatten
+  #    end
+  #  }
+  #  / 
+  #  one_column_name_with_sort
+  #end
 
   rule one_column_name
-    table_name dot column_name {
+    table_name DOT column_name {
       def eval
         column_name.eval
       end
@@ -43,8 +80,68 @@ grammar SQLRowSupport
     column_name
   end
 
+  rule one_or_more_column_names
+    one_column_name optional_spaces COMMA optional_spaces one_or_more_column_names {
+      def eval
+        result1, result2 = one_column_name.eval, one_or_more_column_names.eval
+        [result1, result2].flatten
+      end
+    }
+    / 
+    EMPTY_STRING one_column_name {
+      def eval
+        [one_column_name.eval]
+      end
+    }
+  end
+  
+  rule one_column_name_with_alias
+    table_name DOT column_name SPACES "AS" SPACES alias_column_name {
+      def eval
+        {
+          :column => column_name.eval,
+          :alias_hash => {
+            :column => column_name.eval,
+            :alias => alias_column_name.eval
+          }
+        }
+      end
+    }
+    /
+    column_name SPACES "AS" SPACES alias_column_name {
+      def eval
+        {
+          :column => column_name.eval,
+          :alias_hash => {
+            :column => column_name.eval,
+            :alias => alias_column_name.eval
+          }
+        }
+      end
+    }
+  end
+  
+  rule one_or_more_column_name_with_alias
+    one_column_name_with_alias optional_spaces COMMA optional_spaces one_or_more_column_name_with_alias {
+      def eval
+        result1, result2 = one_column_name_with_alias.eval, one_or_more_column_name_with_alias.eval
+        [result1, result2].flatten
+      end
+    }
+    / 
+    EMPTY_STRING one_column_name_with_alias {
+      def eval
+        [one_column_name_with_alias.eval]
+      end
+    }
+  end
+
   rule column_name
-    backtick_string / column_string / all_columns
+    backtick_column_string / column_string / all_columns
+  end
+
+  rule alias_column_name
+    column_name
   end
   
   rule index_name
@@ -56,18 +153,6 @@ grammar SQLRowSupport
     backtick_string
     /
     string
-  end
-
-  rule column_string
-    string {
-      def eval
-        text_value.downcase
-      end
-    }
-  end
-
-  rule dot
-    "." { def eval; "."; end }
   end
 
   rule all_columns

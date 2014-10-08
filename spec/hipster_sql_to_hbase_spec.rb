@@ -1,4 +1,7 @@
-require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
+$LOAD_PATH.unshift(File.dirname(__FILE__))
+$LOAD_PATH.unshift(File.join(File.dirname(__FILE__), 'sql_sentence_types'))
+
+require 'spec_helper'
 
 
 
@@ -63,11 +66,11 @@ describe "HipsterSqlToHbase.parse_tree method" do
       expect(response.class).to eq(HipsterSqlToHbase::ResultTree)
       expect(response[:query_type]).to eq(:select)
       expect(response[:query_hash].class).to eq(Hash)
-      expect(response[:query_hash][:select].class).to eq(Array)
-      expect(response[:query_hash][:select].length).to eq(1)
-      expect(response[:query_hash][:select][0]).to eq('user')
-      expect(response[:query_hash][:from].class).to eq(String)
-      expect(response[:query_hash][:from]).to eq('users')
+      expect(response[:query_hash][:columns].class).to eq(Array)
+      expect(response[:query_hash][:columns].length).to eq(1)
+      expect(response[:query_hash][:columns][0]).to eq('user')
+      expect(response[:query_hash][:from].class).to eq(Array)
+      expect(response[:query_hash][:from][0]).to eq('users')
       response[:query_hash][:where].should be_nil
       response[:query_hash][:limit].should be_nil
       response[:query_hash][:order].should be_nil
@@ -80,11 +83,11 @@ describe "HipsterSqlToHbase.parse_tree method" do
       expect(response.class).to eq(HipsterSqlToHbase::ResultTree)
       expect(response[:query_type]).to eq(:select)
       expect(response[:query_hash].class).to eq(Hash)
-      expect(response[:query_hash][:select].class).to eq(Array)
-      expect(response[:query_hash][:select].length).to eq(1)
-      expect(response[:query_hash][:select][0]).to eq('user')
-      expect(response[:query_hash][:from].class).to eq(String)
-      expect(response[:query_hash][:from]).to eq('users')
+      expect(response[:query_hash][:columns].class).to eq(Array)
+      expect(response[:query_hash][:columns].length).to eq(1)
+      expect(response[:query_hash][:columns][0]).to eq('user')
+      expect(response[:query_hash][:from].class).to eq(Array)
+      expect(response[:query_hash][:from][0]).to eq('users')
       response[:query_hash][:where].should be_nil
       response[:query_hash][:limit].should be_nil
       response[:query_hash][:order].should be_nil
@@ -97,11 +100,11 @@ describe "HipsterSqlToHbase.parse_tree method" do
       expect(response.class).to eq(HipsterSqlToHbase::ResultTree)
       expect(response[:query_type]).to eq(:select)
       expect(response[:query_hash].class).to eq(Hash)
-      expect(response[:query_hash][:select].class).to eq(Array)
-      expect(response[:query_hash][:select].length).to eq(1)
-      expect(response[:query_hash][:select][0]).to eq('user')
-      expect(response[:query_hash][:from].class).to eq(String)
-      expect(response[:query_hash][:from]).to eq('users')
+      expect(response[:query_hash][:columns].class).to eq(Array)
+      expect(response[:query_hash][:columns].length).to eq(1)
+      expect(response[:query_hash][:columns][0]).to eq('user')
+      expect(response[:query_hash][:from].class).to eq(Array)
+      expect(response[:query_hash][:from][0]).to eq('users')
       response[:query_hash][:where].should be_nil
       response[:query_hash][:limit].should be_nil
       response[:query_hash][:order].should be_nil

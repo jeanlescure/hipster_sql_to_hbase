@@ -43,6 +43,22 @@ grammar SQLPrimitives
     }
   end
 
+  rule string
+    STRING_CHARS+ {
+      def eval
+        text_value
+      end
+    }
+  end
+
+  rule column_string
+    STRING_CHARS_W_NON_XCLUSIVE_NUMS+ {
+      def eval
+        text_value.downcase
+      end
+    }
+  end
+
   rule backtick_string
     BACKTICK string BACKTICK {
       def eval
@@ -51,10 +67,10 @@ grammar SQLPrimitives
     }
   end
 
-  rule string
-    STRING_CHARS+ {
+  rule backtick_column_string
+    BACKTICK column_string BACKTICK {
       def eval
-        text_value
+        column_string.eval
       end
     }
   end
@@ -64,7 +80,15 @@ grammar SQLPrimitives
   end
 
   rule integer
-    MINUS_OR_DIGIT DIGIT* {
+    DASH? DIGIT* {
+      def eval
+        text_value.to_i
+      end
+    }
+  end
+  
+  rule positive_integer
+    DIGIT* {
       def eval
         text_value.to_i
       end
@@ -72,7 +96,7 @@ grammar SQLPrimitives
   end
 
   rule float
-    integer "." integer {
+    integer "." positive_integer {
       def eval
         text_value.to_f
       end

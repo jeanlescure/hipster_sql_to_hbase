@@ -10,35 +10,29 @@ grammar SQLSelect
 
   rule select_expression
     select
-    from 
+    from_or_empty
     where_tree
     limit_condition_or_empty
     order_by_condition_or_empty
-    {
-      def eval
-        SelectExpression.new({
-          :string => self.text_value,
-
-          :select => select.eval,
-          :from   => from.eval,
-          :where  => where_tree.where_condition_or_empty.eval,
-          :limit  => limit_condition_or_empty.eval,
-          :order_by => order_by_condition_or_empty.eval
-        })
-      end
-      
+    {      
       def query_type
         :select
       end
       
       def tree
-        {
-          :select => select.columns,
-          :from   => from.tables,
-          :where  => where_tree.eval,
-          :limit  => limit_condition_or_empty.eval,
-          :order_by => order_by_condition_or_empty.eval
-        }
+        result = {}
+        
+        selectables = select.eval
+        
+        result[:limit] = limit_condition_or_empty.eval unless limit_condition_or_empty.eval.nil?
+        result[:order_by] = order_by_condition_or_empty.eval unless order_by_condition_or_empty.eval.nil?
+        result[:from] = from_or_empty.tables if defined? from_or_empty.tables
+        result[:where] = where_tree.eval unless where_tree.eval.nil?
+        result[:columns] = selectables[:columns] unless selectables[:columns].nil?
+        result[:numbers] = selectables[:numbers] unless selectables[:numbers].nil?
+        result[:aliases] = selectables[:aliases] unless selectables[:aliases].nil?
+        
+        result
       end
     }
   end
