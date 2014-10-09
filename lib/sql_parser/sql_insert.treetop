@@ -1,5 +1,4 @@
 grammar SQLInsert
-  include SQLPrimitives
   include SQLRowSupport
   include SQLHelpers
 

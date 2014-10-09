@@ -24,15 +24,24 @@ grammar SQLSelect
         
         selectables = select.eval
         
-        result[:limit] = limit_condition_or_empty.eval unless limit_condition_or_empty.eval.nil?
-        result[:order_by] = order_by_condition_or_empty.eval unless order_by_condition_or_empty.eval.nil?
-        result[:from] = from_or_empty.tables if defined? from_or_empty.tables
-        result[:where] = where_tree.eval unless where_tree.eval.nil?
-        result[:columns] = selectables[:columns] unless selectables[:columns].nil?
-        result[:numbers] = selectables[:numbers] unless selectables[:numbers].nil?
+        where_tree_val = where_tree.eval
+        result[:where] = where_tree_val unless where_tree_val.nil?
+        
+        order_by_val = order_by_condition_or_empty.eval
+        result[:order_by] = order_by_val unless order_by_val.nil?
+        
+        limit_val = limit_condition_or_empty.eval
+        result[:limit] = limit_val unless limit_val.nil?
+        
+        result[:select] = selectables unless all_selectables_nil?(selectables)
         result[:aliases] = selectables[:aliases] unless selectables[:aliases].nil?
+        result[:from] = from_or_empty.tables if defined? from_or_empty.tables
         
         result
+      end
+      
+      def all_selectables_nil?(selectables)
+        selectables[:columns].nil? && selectables[:numbers].nil?
       end
     }
   end
