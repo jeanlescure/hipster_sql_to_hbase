@@ -9,6 +9,7 @@ grammar SQL
   include SQLShowCreate
   include SQLCreateTable
   include SQLCreateIndex
+  include SQLUpdate
 
   rule sql_statement
     select_expression     /
@@ -20,6 +21,7 @@ grammar SQL
     show_tables           /
     show_create           /
     create_table          /
-    create_index
+    create_index          /
+    update
   end
 end

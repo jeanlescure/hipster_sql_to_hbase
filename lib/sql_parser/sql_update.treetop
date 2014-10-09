@@ -1,82 +1,66 @@
 grammar SQLUpdate
-
-  rule parts
-    update / simple_where_clause / assignment_list / assignment / quoted_string / text / identifier
-  end
+  include SQLRowSupport
+  include SQLWhereCondition
+  include SQLOrderByClause
+  include SQLLimit
+  include SQLHelpers
 
   rule update
-    "UPDATE" space identifier space "SET" space assignment_list space simple_where_clause {
-      def table_name
-        identifier.text_value
+    "UPDATE" SPACES (low_priority SPACES)? (ignore SPACES)? table_name SPACES
+    "SET" SPACES col_val_pairs 
+    where_tree 
+    order_by_condition_or_empty
+    limit_condition_or_empty {
+      def query_type
+        :update
       end
-      def id
-        simple_where_clause.id
-      end
-      def items
-        assignment_list.items
+      def tree
+        result = {
+          :update => table_name.eval,
+          :set => col_val_pairs.eval
+        }
+
+        where_tree_val = where_tree.eval
+        result[:where] = where_tree_val unless where_tree_val.nil?
+        
+        order_by_val = order_by_condition_or_empty.eval
+        result[:order_by] = order_by_val unless order_by_val.nil?
+        
+        limit_val = limit_condition_or_empty.eval
+        result[:limit] = limit_val unless limit_val.nil?
+        
+        result
       end
     }
   end
-
-  rule simple_where_clause
-    "WHERE" space identifier space "=" space quoted_string {
-      def id
-        quoted_string.text_value
-      end
-    }
-  end
-
-  rule assignment_list
-    a1:assignment space "," space a2:assignment_list {
-      def items
-        a1.items.merge(a2.items)
-      end
-    }
-    /
-    assignment
-  end
-
-  rule assignment
-    identifier space "=" space quoted_string {
-
-      def items
-        { key => value }
-      end
-
-      def key
-        identifier.text_value
-      end
-
-      def value
-        quoted_string.text_value
-      end
-    }
-  end
-
-  rule quoted_string
-    "'" text "'" {
-      def text_value
-        text.text_value
+  
+  rule col_val_pairs
+    col_val_pair optional_spaces COMMA optional_spaces col_val_pairs {
+      def eval
+        result1, result2 = col_val_pair.eval, col_val_pairs.eval
+        [result1,result2].flatten
       end
     }
     /
-    "''" {
-      def text_value
-        ""
+    col_val_pair
+  end
+  
+  rule col_val_pair
+    one_column_name optional_spaces "=" optional_spaces simple_primitive {
+      def eval
+        [{
+          :column => one_column_name.eval,
+          :value => simple_primitive.eval
+          }]
       end
     }
   end
-
-  rule text
-    ( "''" / !"'" . )+
+  
+  rule low_priority
+    "LOW_PRIORITY"
   end
-
-  rule identifier
-    (!("'" / "=" / " ") .)+
+  
+  rule ignore
+    "IGNORE"
   end
-
-  rule space
-    ' '*
-  end
-
 end
