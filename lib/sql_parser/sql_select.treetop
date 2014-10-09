@@ -12,8 +12,8 @@ grammar SQLSelect
     select
     from_or_empty
     where_tree
-    limit_condition_or_empty
     order_by_condition_or_empty
+    limit_condition_or_empty
     {      
       def query_type
         :select
