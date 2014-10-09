@@ -2,11 +2,34 @@ grammar SQLSelectClause
   include SQLRowSupport
 
   rule select
-    "SELECT" SPACES selectable_list optional_spaces { 
+    "SELECT" all_selectables optional_spaces { 
+      def eval
+        all_selectables.eval
+      end 
+    }
+  end
+  
+  rule all_selectables
+    SPACES all_columns optional_spaces COMMA optional_spaces selectable_list {
       def eval
         result = selectable_list.eval
+        result[:columns] = [] if result[:columns].nil?
+        result[:columns].unshift all_columns.eval
+        
         result
-      end 
+      end
+    }
+    /
+    SPACES all_columns {
+      def eval
+        { :columns => all_columns.eval }
+      end
+    }
+    /
+    SPACES selectable_list {
+      def eval
+        selectable_list.eval
+      end
     }
   end
   

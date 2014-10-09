@@ -126,7 +126,7 @@ grammar SQLRowSupport
   end
 
   rule column_name
-    backtick_column_string / column_string / all_columns
+    backtick_column_string / column_string
   end
 
   rule alias_column_name
