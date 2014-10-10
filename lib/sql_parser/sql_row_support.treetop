@@ -146,5 +146,7 @@ grammar SQLRowSupport
 
   rule all_columns
     "*" { def eval; "*"; end }
+    /
+    table_name DOT "*" { def eval; "*"; end }
   end
 end
