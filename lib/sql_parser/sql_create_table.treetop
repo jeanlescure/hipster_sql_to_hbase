@@ -67,9 +67,9 @@ grammar SQLCreateTable
   end
   
   rule optional_default
-    SPACES "DEFAULT" SPACES (quoted_string / NULL_KEYWORD / MINUS_OR_DIGIT+)
+    SPACES "DEFAULT" SPACES (quoted_string / NULL_KEYWORD / integer)
     /
-    SPACES "default" SPACES (quoted_string / NULL_KEYWORD / MINUS_OR_DIGIT+)
+    SPACES "default" SPACES (quoted_string / NULL_KEYWORD / integer)
   end
   
   rule optional_auto_increment
