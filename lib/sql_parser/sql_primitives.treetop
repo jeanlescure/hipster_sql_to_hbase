@@ -2,8 +2,8 @@ grammar SQLPrimitives
   include SQLTokens
 
   rule primitive
-    OPEN_PARENS primitive CLOSE_PARENS {
-       def eval
+    OPEN_PARENS simple_primitive CLOSE_PARENS {
+      def eval
         simple_primitive.eval
       end
     }
@@ -12,11 +12,19 @@ grammar SQLPrimitives
   end
 
   rule simple_primitive
-    datetime / date / boolean / quoted_string / backtick_string / number / string
+    datetime / date / boolean / null / quoted_string / backtick_string / number / string
   end
 
   rule optional_spaces
     SPACE*
+  end
+  
+  rule null
+    NULL_KEYWORD {
+      def eval
+        nil
+      end
+    }
   end
 
   rule boolean
