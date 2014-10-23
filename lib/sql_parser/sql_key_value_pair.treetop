@@ -62,26 +62,38 @@ grammar SQLKeyValuePair
   end
 
   rule less_than_or_equal
+    "<=" SPACES "BINARY"  {   def eval;   :<=;   end }
+    /
     "<="  {   def eval;   :<=;   end }
   end
 
   rule greater_than_or_equal
+    ">=" SPACES "BINARY"  {   def eval;   :>=    end }
+    /
     ">="  {   def eval;   :>=    end }
   end
 
   rule less_than
+    "<" SPACES "BINARY"   {   def eval;   :<     end }
+    /
     "<"   {   def eval;   :<     end }
   end
 
   rule greater_than
+    ">" SPACES "BINARY"   {   def eval;   :>     end }
+    /
     ">"   {   def eval;   :>     end }
   end
 
   rule not_equals
+    "!=" SPACES "BINARY"  {  def eval;   :"!="   end }
+    /
     "!="  {  def eval;   :"!="   end }
   end
 
   rule equals
+    "=" SPACES "BINARY"   {   def eval;  :"="    end }
+    /
     "="   {   def eval;  :"="    end }
   end
   
